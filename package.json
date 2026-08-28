@@ -1,0 +1,82 @@
+{
+  "name": "multipush-deck",
+  "version": "1.0.0",
+  "productName": "MultiPush Deck",
+  "private": true,
+  "description": "MultiPush Deck desktop application for synchronized multi-repository Git workflows",
+  "main": "./out/main/index.js",
+  "author": "WProer",
+  "build": {
+    "appId": "com.multipushdeck.app",
+    "productName": "MultiPush Deck",
+    "executableName": "multipush-deck",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "${productName}-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MultiPush Deck"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.developer-tools",
+      "artifactName": "${productName}-${version}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development",
+      "artifactName": "${productName}-${version}.${ext}"
+    }
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "npm run typecheck && electron-vite build",
+    "history:plan": "node scripts/generate-history.js",
+    "history:apply": "node scripts/generate-history.js --execute",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "cross-spawn": "^7.0.6",
+    "diff2html": "^3.4.56",
+    "element-plus": "^2.10.0",
+    "pinia": "^3.0.0",
+    "splitpanes": "^4.1.2",
+    "vue": "^3.5.0",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "electron": "^38.8.6",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^4.0.0",
+    "sass": "^1.105.1",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "vue-tsc": "^3.0.0"
+  }
+}
