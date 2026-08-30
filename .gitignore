@@ -1,3 +1,8 @@
 node_modules/
-# 临时整理：第 1-1 项
-# 临时整理：第 1-2 项
+out/
+dist/
+*.log
+.DS_Store
+.git.backup-*
+.git-remotes.txt
+scripts/
