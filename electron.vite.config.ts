@@ -1,7 +1,23 @@
 import { resolve } from 'node:path'
-// 临时整理：第 1-1 项
-const __draft0_1 = 1
-// 临时整理：第 1-3 项
-const __draft0_3 = 3
-// 临时整理：第 1-5 项
-const __draft0_5 = 5
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import vue from '@vitejs/plugin-vue'
+
+export default defineConfig({
+  main: {
+    plugins: [externalizeDepsPlugin()]
+  },
+  preload: {
+    plugins: [externalizeDepsPlugin()]
+  },
+  renderer: {
+    define: {
+      __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+    },
+    resolve: {
+      alias: {
+        '@renderer': resolve('src/renderer/src')
+      }
+    },
+    plugins: [vue()]
+  }
+})
