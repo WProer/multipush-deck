@@ -1,4 +1,30 @@
 appId: com.multipushdeck.app
 productName: MultiPush Deck
 executableName: multipush-deck
-# 临时整理：第 1-1 项
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+win:
+  target:
+    - nsis
+  artifactName: ${productName}-${version}-Setup.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: MultiPush Deck
+mac:
+  target:
+    - dmg
+  category: public.app-category.developer-tools
+  artifactName: ${productName}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+  category: Development
+  artifactName: ${productName}-${version}.${ext}
