@@ -160,12 +160,90 @@ export interface ImportConflict {
 }
 
 export interface ImportResult {
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
+  added: ImportedRemote[]
+  updated: UpdatedImportedRemote[]
+  skipped: ImportedRemote[]
+  conflict: ImportConflict[]
+  total: number
+}
+
+export interface LocalRemote {
+  name: string
+  url: string
+}
+
+export interface ConfiguredRemote {
+  alias: string
+  name: string
+  url: string
+}
+
+export interface RemoteSetupItem {
+  name: string
+  url: string
+}
+
+export interface RemoteSetupFailure extends RemoteSetupItem {
+  reason: string
+}
+
+export interface SetupResult {
+  success: boolean
+  added: RemoteSetupItem[]
+  updated: RemoteSetupItem[]
+  skipped: RemoteSetupItem[]
+  failed: RemoteSetupFailure[]
+}
+
+export interface RemotePushResult {
+  remoteName: string
+  url: string
+  success: boolean
+  skipped: boolean
+  reason: string
+  duration: number
+  exitCode: number | null
+  stdout: string
+  stderr: string
+}
+
+export interface PushAllResult {
+  success: boolean
+  total: number
+  successCount: number
+  failed: number
+  skipped: number
+  branch: string
+  results: RemotePushResult[]
+  error?: string
+}
+
+export type SinglePushResult = RemotePushResult
+
+export type RemoteSyncState =
+  | 'up-to-date'
+  | 'ahead'
+  | 'behind'
+  | 'diverged'
+  | 'unknown'
+
+export interface RemoteSyncStatus {
+  name: string
+  url: string
+  localAhead: number
+  localBehind: number
+  status: RemoteSyncState
+  error?: string
+}
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项
+const __draft2_11 = 11

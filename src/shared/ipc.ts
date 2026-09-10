@@ -1,13 +1,41 @@
 export const IPC_CHANNELS = {
-// 临时整理：第 1-1 项
-const __draft0_1 = 1
-// 临时整理：第 1-3 项
-const __draft0_3 = 3
-// 临时整理：第 1-5 项
-const __draft0_5 = 5
-// 临时整理：第 1-7 项
-const __draft0_7 = 7
-// 临时整理：第 1-9 项
-const __draft0_9 = 9
-// 临时整理：第 1-11 项
-const __draft0_11 = 11
+  getAppInfo: 'get-app-info',
+  getRuntimeInfo: 'get-runtime-info',
+  openPath: 'open-path',
+  copyToClipboard: 'copy-to-clipboard',
+  openExternal: 'open-external',
+  selectDirectory: 'select-directory',
+  getInitStatus: 'get-init-status',
+  multiPushInitConfig: 'multi-push:init-config',
+  multiPushSetupRemotes: 'multi-push:setup-remotes',
+  multiPushPushAll: 'multi-push:push-all',
+  multiPushGetRemoteStatus: 'multi-push:get-remote-status',
+  multiPushImportFromRemotes: 'multi-push:import-from-remotes',
+  multiPushListRemotes: 'multi-push:list-remotes',
+  getRemoteStatus: 'get-remote-status',
+  getCurrentBranch: 'get-current-branch',
+  getFileCounts: 'get-file-counts',
+  getCommitLog: 'git-log:get-log',
+  getCommitPushStatus: 'git-log:get-push-status',
+  getCommitDetail: 'git-log:get-commit-detail',
+  getCommitFileDiff: 'git-log:get-commit-file-diff',
+  listGitBranches: 'git-branch:list',
+  gitStatus: 'git-status',
+  gitDiff: 'git-diff',
+  gitStage: 'git-stage',
+  gitUnstage: 'git-unstage',
+  gitDiscard: 'git-discard',
+  gitCommit: 'git-commit',
+  runGitCommand: 'run-git-command',
+  stageFiles: 'stage-files',
+  unstageFiles: 'unstage-files',
+  discardChanges: 'discard-changes',
+  getFileDiff: 'get-file-diff',
+  logCommandStart: 'log-command-start',
+  logCommandStdout: 'log-command-stdout',
+  logCommandStderr: 'log-command-stderr',
+  logCommandEnd: 'log-command-end',
+  readConfig: 'read-config',
+  writeConfig: 'write-config',
+  getStatus: 'get-status'
+} as const
