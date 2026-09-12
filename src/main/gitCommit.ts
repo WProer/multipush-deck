@@ -8,12 +8,89 @@ import type {
 import { executeCommand } from './commandRunner'
 import { isGitRepository } from './gitRepository'
 
-// 临时整理：第 1-1 项
-const __draft0_1 = 1
-// 临时整理：第 1-3 项
-const __draft0_3 = 3
-// 临时整理：第 1-5 项
-const __draft0_5 = 5
-// 临时整理：第 1-7 项
-const __draft0_7 = 7
-// 临时整理：第 1-9 项
+type OutputHandler = (event: CommandOutputEvent) => void
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
+}
+
+function isErrnoException(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && 'code' in error
+}
+
+function emitOutput(
+  onOutput: OutputHandler | undefined,
+  event: CommandOutputEvent
+): void {
+  if (!onOutput) {
+    return
+  }
+
+  try {
+    onOutput(event)
+  } catch {
+    // A logging consumer must not stop the command itself.
+  }
+}
+
+function failedResult(
+  code: number,
+  message: string,
+  onOutput?: OutputHandler
+): CommandResult {
+  emitOutput(onOutput, { type: 'stderr', data: `${message}\n` })
+  emitOutput(onOutput, { type: 'exit', data: String(code) })
+  return { code, success: false }
+}
+
+export async function commitStagedChanges(
+  cwd: string,
+  message: string,
+  onOutput?: OutputHandler,
+  sender?: WebContents
+): Promise<CommandResult> {
+  if (typeof cwd !== 'string' || cwd.trim() === '') {
+    return failedResult(1, '工作目录不能为空。', onOutput)
+  }
+
+  if (typeof message !== 'string' || message.trim() === '') {
+    return failedResult(1, '提交信息不能为空。', onOutput)
+  }
+
+  const workingDirectory = resolve(cwd)
+
+  try {
+    const directory = await stat(workingDirectory)
+    if (!directory.isDirectory()) {
+      return failedResult(1, `工作目录不是文件夹：${workingDirectory}`, onOutput)
+    }
+  } catch (error) {
+    if (isErrnoException(error) && error.code === 'ENOENT') {
+      return failedResult(1, `工作目录不存在：${workingDirectory}`, onOutput)
+    }
+
+    return failedResult(1, `无法访问工作目录：${getErrorMessage(error)}`, onOutput)
+  }
+
+  if (!(await isGitRepository(workingDirectory))) {
+    return failedResult(1, `当前目录不是 Git 仓库：${workingDirectory}`, onOutput)
+  }
+
+  const commitMessage = message.trim()
+  const commitResult = await executeCommand(
+    'git commit',
+    'git',
+    ['commit', '-m', commitMessage],
+    workingDirectory,
+    {
+      onOutput,
+      sender,
+      summarize: () => `提交：${commitMessage.slice(0, 30)}`
+    }
+  )
+
+  return {
+    code: commitResult.exitCode,
+    success: commitResult.success
+  }
+}

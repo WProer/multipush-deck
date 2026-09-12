@@ -394,13 +394,241 @@ export async function executeCommand(
   if (!options.silent) {
     sendLogEvent(options.sender, IPC_CHANNELS.logCommandStart, startEvent)
   }
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
+
+  const validation = await validateWorkingDirectory(cwd)
+  if (!validation.ok) {
+    return finishWithoutProcess(
+      id,
+      startEvent,
+      startedAt,
+      validation.message,
+      options
+    )
+  }
+
+  if (options.preflightError) {
+    return finishWithoutProcess(
+      id,
+      startEvent,
+      startedAt,
+      options.preflightError,
+      options
+    )
+  }
+
+  return new Promise<GitCommandExecutionResult>((resolveCommand) => {
+    let settled = false
+    let stdout = ''
+    let rawStderr = ''
+    let filteredStderr = ''
+    const stdoutDecoder = new StringDecoder('utf8')
+    const stderrDecoder = new StringDecoder('utf8')
+    const noiseFilter = createNoiseFilter()
+
+    function sendStdoutChunk(data: string): void {
+      const sanitized = sanitizeCommandOutput(data)
+      if (!sanitized || options.silent) {
+        return
+      }
+
+      sendLogEvent(options.sender, IPC_CHANNELS.logCommandStdout, {
+        id,
+        data: sanitized
+      } satisfies LogCommandOutputEvent)
+      emitLegacyOutput(options.onOutput, {
+        type: 'stdout',
+        data: sanitized,
+        source: startEvent.source
+      })
+    }
+
+    function sendStderrChunk(data: string): void {
+      const sanitized = sanitizeCommandOutput(data)
+      if (!sanitized || options.silent) {
+        return
+      }
+
+      sendLogEvent(options.sender, IPC_CHANNELS.logCommandStderr, {
+        id,
+        data: sanitized
+      } satisfies LogCommandOutputEvent)
+      emitLegacyOutput(options.onOutput, {
+        type: 'stderr',
+        data: sanitized,
+        source: startEvent.source
+      })
+    }
+
+    function finish(exitCode: number, extraStderr = ''): void {
+      if (settled) {
+        return
+      }
+
+      settled = true
+      const finalStdout = sanitizeCommandOutput(stdoutDecoder.end())
+      const finalStderr = sanitizeCommandOutput(stderrDecoder.end())
+      stdout += finalStdout
+      rawStderr += finalStderr
+
+      if (options.deferStdout) {
+        try {
+          const formatted = options.formatStdout
+            ? options.formatStdout(stdout)
+            : stdout
+          sendStdoutChunk(formatted)
+        } catch {
+          sendStdoutChunk(stdout)
+        }
+      } else {
+        sendStdoutChunk(finalStdout)
+      }
+
+      const finalFilteredStderr =
+        noiseFilter.push(finalStderr) + noiseFilter.flush()
+      filteredStderr += finalFilteredStderr
+      sendStderrChunk(finalFilteredStderr)
+
+      if (extraStderr) {
+        const sanitizedExtraStderr = sanitizeCommandOutput(extraStderr)
+        rawStderr += sanitizedExtraStderr
+        filteredStderr += sanitizedExtraStderr
+        sendStderrChunk(sanitizedExtraStderr)
+      }
+
+      const result = createResult(
+        exitCode,
+        stdout,
+        filteredStderr,
+        rawStderr,
+        Date.now() - startedAt
+      )
+      const summary =
+        options.summarize?.(result) ??
+        getSummaryFromOutput(source, command, args, result)
+      const finalSummary = result.success
+        ? summary
+        : translateCommandFailure(
+            result.stderr || result.stdout || summary
+          )
+      const details = getCommandDetails(options, result)
+
+      if (!options.silent) {
+        sendLogEvent(options.sender, IPC_CHANNELS.logCommandEnd, {
+          id,
+          exitCode: result.exitCode,
+          duration: result.duration,
+          summary: finalSummary,
+          details,
+          rawStderr: result.rawStderr
+        })
+        emitLegacyOutput(options.onOutput, {
+          type: 'exit',
+          data: String(result.exitCode),
+          source: startEvent.source
+        })
+      }
+
+      resolveCommand(result)
+    }
+
+    let child: ReturnType<typeof spawn>
+
+    try {
+      child = spawn(command, args, {
+        cwd: validation.directory,
+        shell: false,
+        windowsHide: true
+      })
+    } catch (error) {
+      finish(getSpawnErrorCode(error), getSpawnErrorMessage(error, options.notFoundMessage))
+      return
+    }
+
+    child.stdout?.on('data', (chunk: Buffer) => {
+      const data = sanitizeCommandOutput(stdoutDecoder.write(chunk))
+      if (!data) {
+        return
+      }
+
+      stdout += data
+      if (!options.deferStdout) {
+        sendStdoutChunk(data)
+      }
+    })
+
+    child.stderr?.on('data', (chunk: Buffer) => {
+      const data = sanitizeCommandOutput(stderrDecoder.write(chunk))
+      if (!data) {
+        return
+      }
+
+      rawStderr += data
+      const filtered = noiseFilter.push(data)
+      if (!filtered) {
+        return
+      }
+
+      filteredStderr += filtered
+      sendStderrChunk(filtered)
+    })
+
+    child.once('error', (error) => {
+      finish(
+        getSpawnErrorCode(error),
+        getSpawnErrorMessage(error, options.notFoundMessage)
+      )
+    })
+
+    child.once('close', (code) => {
+      finish(code ?? 1)
+    })
+  })
+}
+
+async function finishWithoutProcess(
+  id: string,
+  startEvent: LogCommandStartEvent,
+  startedAt: number,
+  message: string,
+  options: ExecuteCommandOptions
+): Promise<GitCommandExecutionResult> {
+  const sanitizedMessage = sanitizeCommandOutput(message)
+  const result = createResult(
+    1,
+    '',
+    sanitizedMessage,
+    sanitizedMessage,
+    Date.now() - startedAt
+  )
+  const summary = translateCommandFailure(
+    options.summarize?.(result) ?? sanitizedMessage
+  )
+  const details = getCommandDetails(options, result)
+
+  if (!options.silent) {
+    sendLogEvent(options.sender, IPC_CHANNELS.logCommandStderr, {
+      id,
+      data: `${sanitizedMessage}\n`
+    } satisfies LogCommandOutputEvent)
+    sendLogEvent(options.sender, IPC_CHANNELS.logCommandEnd, {
+      id,
+      exitCode: result.exitCode,
+      duration: result.duration,
+      summary,
+      details,
+      rawStderr: result.rawStderr
+    })
+    emitLegacyOutput(options.onOutput, {
+      type: 'stderr',
+      data: `${sanitizedMessage}\n`,
+      source: startEvent.source
+    })
+    emitLegacyOutput(options.onOutput, {
+      type: 'exit',
+      data: String(result.exitCode),
+      source: startEvent.source
+    })
+  }
+
+  return result
+}
