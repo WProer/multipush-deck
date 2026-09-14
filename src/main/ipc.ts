@@ -396,53 +396,216 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.selectDirectory, async (event) => {
     const owner = BrowserWindow.fromWebContents(event.sender)
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
-const __draft1_15 = 15
-// 临时整理：第 2-17 项
-const __draft1_17 = 17
-// 临时整理：第 2-19 项
-const __draft1_19 = 19
-// 临时整理：第 2-21 项
-const __draft1_21 = 21
-// 临时整理：第 2-23 项
-const __draft1_23 = 23
-// 临时整理：第 2-25 项
-const __draft1_25 = 25
-// 临时整理：第 2-27 项
-const __draft1_27 = 27
-// 临时整理：第 2-29 项
-const __draft1_29 = 29
-// 临时整理：第 2-31 项
-const __draft1_31 = 31
-// 临时整理：第 2-33 项
-const __draft1_33 = 33
-// 临时整理：第 2-35 项
-const __draft1_35 = 35
-// 临时整理：第 2-37 项
-const __draft1_37 = 37
-// 临时整理：第 2-39 项
-const __draft1_39 = 39
-// 临时整理：第 2-41 项
-const __draft1_41 = 41
-// 临时整理：第 2-43 项
-const __draft1_43 = 43
-// 临时整理：第 2-45 项
-const __draft1_45 = 45
-// 临时整理：第 2-47 项
-const __draft1_47 = 47
-// 临时整理：第 2-49 项
-const __draft1_49 = 49
+    const options: OpenDialogOptions = {
+      properties: ['openDirectory']
+    }
+    const result = owner
+      ? await dialog.showOpenDialog(owner, options)
+      : await dialog.showOpenDialog(options)
+
+    return result.canceled ? null : (result.filePaths[0] ?? null)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.getInitStatus, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getInitStatus(cwd, event.sender)
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushInitConfig,
+    async (event, cwd: unknown) => {
+      assertNonEmptyString(cwd, 'cwd')
+      return createMultiPushConfigFile(cwd, { sender: event.sender })
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushImportFromRemotes,
+    async (event, payload: unknown) => {
+      const { cwd, overwrite } = parseImportFromRemotesPayload(payload)
+      return importMultiPushFromLocalRemotes(
+        cwd,
+        { overwrite },
+        { sender: event.sender }
+      )
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushSetupRemotes,
+    async (event, cwd: unknown) => {
+      assertNonEmptyString(cwd, 'cwd')
+      return setupMultiPushRemotes(cwd, { sender: event.sender })
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushPushAll,
+    async (event, payload: unknown) => {
+      const { cwd, branch, concurrency } =
+        parseMultiPushPushPayload(payload)
+      return pushAllRemotes(cwd, {
+        sender: event.sender,
+        branch,
+        concurrency
+      })
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushGetRemoteStatus,
+    async (event, payload: unknown) => {
+      const { cwd, branch } = parseMultiPushStatusPayload(payload)
+      return getMultiPushRemoteStatus(cwd, {
+        sender: event.sender,
+        branch
+      })
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.multiPushListRemotes,
+    async (event, cwd: unknown) => {
+      assertNonEmptyString(cwd, 'cwd')
+      return listMultiPushRemotes(cwd, { sender: event.sender })
+    }
+  )
+
+  ipcMain.handle(IPC_CHANNELS.getRemoteStatus, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getRemoteStatus(cwd, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.getCurrentBranch, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getCurrentBranch(cwd, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.getFileCounts, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getFileCounts(cwd, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.getCommitLog, async (event, payload: unknown) => {
+    const request = parseCommitLogPayload(payload)
+    return getCommitLog(request.cwd, request, event.sender)
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.getCommitPushStatus,
+    async (_event, payload: unknown) => {
+      const { cwd, commits, branch } = parseCommitPushStatusPayload(payload)
+      return getPushStatusForCommits(cwd, commits, branch)
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.getCommitDetail,
+    async (_event, payload: unknown) => {
+      const { cwd, hash } = parseCommitHashPayload(payload)
+      return getCommitDetail(cwd, hash)
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.getCommitFileDiff,
+    async (_event, payload: unknown) => {
+      const { cwd, hash, path } = parseCommitFileDiffPayload(payload)
+      return getCommitFileDiff(cwd, hash, path)
+    }
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.listGitBranches,
+    async (_event, cwd: unknown) => {
+      assertNonEmptyString(cwd, 'cwd')
+      return listGitBranches(cwd)
+    }
+  )
+
+  ipcMain.handle(IPC_CHANNELS.gitStatus, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getStatus(cwd, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.gitDiff, async (event, payload: unknown) => {
+    const { cwd, path, staged } = parseFileDiffPayload(payload)
+    return getDiff(cwd, path, staged, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.gitStage, async (event, payload: unknown) => {
+    const { cwd, paths } = parseFileOperationPayload(payload)
+    return stageFiles(cwd, paths, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.gitUnstage, async (event, payload: unknown) => {
+    const { cwd, paths } = parseFileOperationPayload(payload)
+    return unstageFiles(cwd, paths, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.gitDiscard, async (event, payload: unknown) => {
+    const { cwd, file } = parseFileDiscardPayload(payload)
+    return discardFile(cwd, file, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.gitCommit, async (event, payload: unknown) => {
+    const { cwd, message } = parseGitCommitPayload(payload)
+    return commit(cwd, message, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.stageFiles, async (event, payload: unknown) => {
+    const { cwd, paths } = parseFileOperationPayload(payload)
+    return stageFiles(cwd, paths, undefined, event.sender)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.unstageFiles, async (event, payload: unknown) => {
+    const { cwd, paths } = parseFileOperationPayload(payload)
+    return unstageFiles(cwd, paths, undefined, event.sender)
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.discardChanges,
+    async (event, payload: unknown) => {
+      const { cwd, paths } = parseFileOperationPayload(payload)
+      return discardChanges(cwd, paths, undefined, event.sender)
+    }
+  )
+
+  ipcMain.handle(IPC_CHANNELS.getFileDiff, async (event, payload: unknown) => {
+    const { cwd, path, staged } = parseFileDiffPayload(payload)
+    return getDiff(cwd, path, staged, undefined, event.sender)
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.runGitCommand,
+    async (event, payload: unknown) => {
+      const request = parseRunGitCommandPayload(payload)
+      return executeCommand(
+        request.source,
+        request.command,
+        request.args,
+        request.cwd,
+        { sender: event.sender }
+      )
+    }
+  )
+
+  ipcMain.handle(IPC_CHANNELS.readConfig, async (_event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return readConfig(cwd)
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.writeConfig,
+    async (_event, cwd: unknown, content: unknown) => {
+      assertNonEmptyString(cwd, 'cwd')
+      assertStringContent(content, 'content')
+      await writeConfig(cwd, content)
+    }
+  )
+
+  ipcMain.handle(IPC_CHANNELS.getStatus, async (event, cwd: unknown) => {
+    assertNonEmptyString(cwd, 'cwd')
+    return getStatus(cwd, undefined, event.sender)
+  })
+}

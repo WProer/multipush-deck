@@ -308,83 +308,156 @@ export interface GitFileStatusSummary {
 }
 
 export interface GitFileStatusResult {
-// 临时整理：第 4-1 项
-const __draft3_1 = 1
-// 临时整理：第 4-3 项
-const __draft3_3 = 3
-// 临时整理：第 4-5 项
-const __draft3_5 = 5
-// 临时整理：第 4-7 项
-const __draft3_7 = 7
-// 临时整理：第 4-9 项
-const __draft3_9 = 9
-// 临时整理：第 4-11 项
-const __draft3_11 = 11
-// 临时整理：第 4-13 项
-const __draft3_13 = 13
-// 临时整理：第 4-15 项
-const __draft3_15 = 15
-// 临时整理：第 4-17 项
-const __draft3_17 = 17
-// 临时整理：第 4-19 项
-const __draft3_19 = 19
-// 临时整理：第 4-21 项
-const __draft3_21 = 21
-// 临时整理：第 4-23 项
-const __draft3_23 = 23
-// 临时整理：第 4-25 项
-const __draft3_25 = 25
-// 临时整理：第 4-27 项
-const __draft3_27 = 27
-// 临时整理：第 4-29 项
-const __draft3_29 = 29
-// 临时整理：第 4-31 项
-const __draft3_31 = 31
-// 临时整理：第 4-33 项
-const __draft3_33 = 33
-// 临时整理：第 4-35 项
-const __draft3_35 = 35
-// 临时整理：第 4-37 项
-const __draft3_37 = 37
-// 临时整理：第 4-39 项
-const __draft3_39 = 39
-// 临时整理：第 4-41 项
-const __draft3_41 = 41
-// 临时整理：第 4-43 项
-const __draft3_43 = 43
-// 临时整理：第 4-45 项
-const __draft3_45 = 45
-// 临时整理：第 4-47 项
-const __draft3_47 = 47
-// 临时整理：第 4-49 项
-const __draft3_49 = 49
-// 临时整理：第 4-51 项
-const __draft3_51 = 51
-// 临时整理：第 4-53 项
-const __draft3_53 = 53
-// 临时整理：第 4-55 项
-const __draft3_55 = 55
-// 临时整理：第 4-57 项
-const __draft3_57 = 57
-// 临时整理：第 4-59 项
-const __draft3_59 = 59
-// 临时整理：第 4-61 项
-const __draft3_61 = 61
-// 临时整理：第 4-63 项
-const __draft3_63 = 63
-// 临时整理：第 4-65 项
-const __draft3_65 = 65
-// 临时整理：第 4-67 项
-const __draft3_67 = 67
-// 临时整理：第 4-69 项
-const __draft3_69 = 69
-// 临时整理：第 4-71 项
-const __draft3_71 = 71
-// 临时整理：第 4-73 项
-const __draft3_73 = 73
-// 临时整理：第 4-75 项
-const __draft3_75 = 75
-// 临时整理：第 4-77 项
-const __draft3_77 = 77
-// 临时整理：第 4-79 项
-const __draft3_79 = 79
+  success: boolean
+  cwd: string
+  branch: string
+  upstream: string
+  ahead: number
+  behind: number
+  files: GitFileStatusItem[]
+  summary: GitFileStatusSummary
+  checkedAt: string
+  error?: string
+}
+
+export interface GitCurrentBranchResult {
+  success: boolean
+  branch: string
+  error?: string
+}
+
+export interface GitFileCountsResult {
+  success: boolean
+  staged: number
+  unstaged: number
+  error?: string
+}
+
+export interface CommitLogQuery {
+  branch?: string
+  limit?: number
+  skip?: number
+}
+
+export interface CommitLogEntry {
+  hash: string
+  shortHash: string
+  author: string
+  email: string
+  date: string
+  subject: string
+}
+
+export type CommitPushState =
+  | 'pushed'
+  | 'partial'
+  | 'unpushed'
+  | 'unknown'
+
+export interface CommitRemotePushStatus {
+  name: string
+  url: string
+  pushed: boolean | null
+  aheadCount: number
+}
+
+export interface CommitPushStatus {
+  pushedTo: string[]
+  notPushedTo: string[]
+  status: CommitPushState
+  remotes: CommitRemotePushStatus[]
+}
+
+export interface CommitFileChange {
+  path: string
+  originalPath?: string
+  statusCode: string
+  status: GitFileStatusCode
+}
+
+export interface CommitDetail {
+  commit: CommitLogEntry
+  message: string
+  files: CommitFileChange[]
+}
+
+export interface GitBranchListResult {
+  success: boolean
+  branches: string[]
+  current: string
+  error?: string
+}
+
+export interface DesktopApi {
+  getAppInfo(): Promise<AppInfo>
+  getRuntimeInfo(): Promise<RuntimeInfo>
+  openPath(target: string): Promise<string>
+  copyToClipboard(text: string): Promise<boolean>
+  openExternal(url: string): Promise<boolean>
+  selectDirectory(): Promise<string | null>
+  getInitStatus(cwd: string): Promise<GitInitStatus>
+  initMultiPushConfig(cwd: string): Promise<ImportResult>
+  multiPushSetupRemotes(cwd: string): Promise<SetupResult>
+  multiPushPushAll(
+    cwd: string,
+    options?: MultiPushPushOptions
+  ): Promise<PushAllResult>
+  multiPushGetRemoteStatus(
+    cwd: string,
+    branch?: string
+  ): Promise<MultiPushStatusResult>
+  multiPushImportFromRemotes(
+    cwd: string,
+    overwrite?: boolean
+  ): Promise<ImportResult>
+  multiPushListRemotes(cwd: string): Promise<LocalRemote[]>
+  getRemoteStatus(cwd: string): Promise<RemoteStatusResult>
+  getCurrentBranch(cwd: string): Promise<GitCurrentBranchResult>
+  getFileCounts(cwd: string): Promise<GitFileCountsResult>
+  getCommitLog(
+    cwd: string,
+    options: CommitLogQuery
+  ): Promise<CommitLogEntry[]>
+  getCommitPushStatus(
+    cwd: string,
+    commits: string[],
+    branch: string
+  ): Promise<Map<string, CommitPushStatus>>
+  getCommitDetail(cwd: string, hash: string): Promise<CommitDetail>
+  getCommitFileDiff(
+    cwd: string,
+    hash: string,
+    path: string
+  ): Promise<GitFileDiffResult>
+  listGitBranches(cwd: string): Promise<GitBranchListResult>
+  gitStatus(cwd: string): Promise<GitFileStatusResult>
+  gitDiff(cwd: string, file: string, staged: boolean): Promise<GitFileDiffResult>
+  gitStage(cwd: string, files: string[]): Promise<GitFileOperationResult>
+  gitUnstage(cwd: string, files: string[]): Promise<GitFileOperationResult>
+  gitDiscard(cwd: string, file: string): Promise<GitFileOperationResult>
+  gitCommit(cwd: string, message: string): Promise<CommandResult>
+  runGitCommand(
+    payload: RunGitCommandPayload
+  ): Promise<GitCommandExecutionResult>
+  stageFiles(cwd: string, paths: string[]): Promise<GitFileOperationResult>
+  unstageFiles(cwd: string, paths: string[]): Promise<GitFileOperationResult>
+  discardChanges(cwd: string, paths: string[]): Promise<GitFileOperationResult>
+  getFileDiff(
+    cwd: string,
+    path: string,
+    staged: boolean
+  ): Promise<GitFileDiffResult>
+  readConfig(cwd: string): Promise<ConfigReadResult>
+  writeConfig(cwd: string, content: string): Promise<void>
+  getStatus(cwd: string): Promise<GitFileStatusResult>
+  onLogCommandStart(
+    callback: (event: LogCommandStartEvent) => void
+  ): () => void
+  onLogCommandStdout(
+    callback: (event: LogCommandOutputEvent) => void
+  ): () => void
+  onLogCommandStderr(
+    callback: (event: LogCommandOutputEvent) => void
+  ): () => void
+  onLogCommandEnd(callback: (event: LogCommandEndEvent) => void): () => void
+}
