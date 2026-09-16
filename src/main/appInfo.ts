@@ -59,18 +59,36 @@ async function readGitVersion(): Promise<string> {
     if (!result.success) {
       return '未检测到'
     }
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
+
+    return result.stdout.trim() || '未检测到'
+  } catch {
+    return '未检测到'
+  }
+}
+
+export async function getRuntimeInfo(): Promise<RuntimeInfo> {
+  const [vue, elementPlus, pinia, electronVite, gitVersion] =
+    await Promise.all([
+      readPackageVersion('vue'),
+      readPackageVersion('element-plus'),
+      readPackageVersion('pinia'),
+      readPackageVersion('electron-vite'),
+      readGitVersion()
+    ])
+
+  return {
+    platform: process.platform,
+    arch: process.arch,
+    osVersion: `${osType()} ${osRelease()}`,
+    gitVersion,
+    versions: {
+      electron: process.versions.electron ?? '未知',
+      chromium: process.versions.chrome ?? '未知',
+      node: process.versions.node ?? '未知',
+      vue,
+      elementPlus,
+      pinia,
+      electronVite
+    }
+  }
+}

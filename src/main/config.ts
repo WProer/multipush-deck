@@ -249,38 +249,131 @@ export async function importFromLocalRemotes(
     if (/not a git repository/i.test(message)) {
       throw new Error(`当前目录不是 Git 仓库：${resolve(cwd)}`)
     }
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
-const __draft1_15 = 15
-// 临时整理：第 2-17 项
-const __draft1_17 = 17
-// 临时整理：第 2-19 项
-const __draft1_19 = 19
-// 临时整理：第 2-21 项
-const __draft1_21 = 21
-// 临时整理：第 2-23 项
-const __draft1_23 = 23
-// 临时整理：第 2-25 项
-const __draft1_25 = 25
-// 临时整理：第 2-27 项
-const __draft1_27 = 27
-// 临时整理：第 2-29 项
-const __draft1_29 = 29
-// 临时整理：第 2-31 项
-const __draft1_31 = 31
-// 临时整理：第 2-33 项
-const __draft1_33 = 33
-// 临时整理：第 2-35 项
+
+    throw new Error(
+      `读取本地远程失败：${message || `退出码 ${remoteResult.exitCode}`}`
+    )
+  }
+
+  const localRemotes = parseLocalRemoteOutput(remoteResult.stdout)
+  if (localRemotes.length === 0) {
+    return createEmptyImportResult()
+  }
+
+  let content = ''
+  try {
+    content = await readFile(configPath, 'utf8')
+  } catch (error) {
+    if (!isMissingFileError(error)) {
+      throw new Error(
+        `读取 ${GIT_REMOTES_FILE_NAME} 失败：${getErrorMessage(error)}`
+      )
+    }
+  }
+
+  const configuredRepositories = parseConfig(content)
+  const parsedLines = collectConfigLines(content)
+  const result = createEmptyImportResult(localRemotes.length)
+  const repositoriesToAppend: RepositoryConfig[] = []
+  const lineUpdates: ConfigLineUpdate[] = []
+
+  for (const localRemote of localRemotes) {
+    const aliasMatch = configuredRepositories.find(
+      (repository) => repository.alias === localRemote.alias
+    )
+
+    if (
+      aliasMatch &&
+      normalizeRemoteUrl(aliasMatch.url) === normalizeRemoteUrl(localRemote.url)
+    ) {
+      result.skipped.push({
+        alias: localRemote.alias,
+        url: localRemote.url
+      })
+      continue
+    }
+
+    if (!aliasMatch) {
+      const repository: RepositoryConfig = {
+        alias: localRemote.alias,
+        url: localRemote.url,
+        enabled: true
+      }
+      result.added.push({
+        alias: localRemote.alias,
+        url: localRemote.url
+      })
+      repositoriesToAppend.push(repository)
+      configuredRepositories.push(repository)
+      continue
+    }
+
+    if (!overwrite) {
+      result.conflict.push({
+        alias: localRemote.alias,
+        configUrl: aliasMatch.url,
+        localUrl: localRemote.url
+      })
+      continue
+    }
+
+    const oldUrl = aliasMatch.url
+    aliasMatch.url = localRemote.url
+    result.updated.push({
+      alias: localRemote.alias,
+      url: localRemote.url,
+      oldUrl
+    })
+
+    const parsedLine = parsedLines.find(
+      (line) => line.alias === localRemote.alias
+    )
+    if (parsedLine) {
+      lineUpdates.push({
+        ...parsedLine,
+        repository: {
+          alias: aliasMatch.alias || localRemote.alias,
+          url: localRemote.url,
+          enabled: aliasMatch.enabled
+        }
+      })
+    } else {
+      repositoriesToAppend.push({
+        alias: localRemote.alias,
+        url: localRemote.url,
+        enabled: aliasMatch.enabled
+      })
+    }
+  }
+
+  if (result.added.length > 0 || result.updated.length > 0) {
+    const updatedContent = applyConfigLineUpdates(content, lineUpdates)
+    const nextContent = appendConfigRepositories(
+      updatedContent,
+      repositoriesToAppend
+    )
+    await writeConfig(cwd, nextContent)
+  }
+
+  return result
+}
+
+export async function createEmptyConfigFile(
+  cwd: string
+): Promise<ImportResult> {
+  const configPath = getConfigPath(cwd)
+
+  try {
+    await writeFile(configPath, EMPTY_CONFIG_TEMPLATE, 'utf8')
+  } catch (error) {
+    throw new Error(
+      `创建 ${GIT_REMOTES_FILE_NAME} 失败：${getErrorMessage(error)}`
+    )
+  }
+
+  try {
+    return await importFromLocalRemotes(cwd, { overwrite: false })
+  } catch {
+    return createEmptyImportResult()
+  }
+}
