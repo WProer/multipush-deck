@@ -77,13 +77,42 @@ export function parseConfigReport(content: string): ConfigParseReport {
       continue
     }
 
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
+    if (!looksLikeRepositoryUrl(url)) {
+      continue
+    }
+
+
+    repositories.push({ alias, url, enabled: !disabled })
+    pendingAlias = ''
+  }
+
+  return { repositories, ignoredExamples }
+}
+
+export function parseConfig(content: string): RepositoryConfig[] {
+  return parseConfigReport(content).repositories
+}
+
+export function stringifyConfig(repos: readonly RepositoryConfig[]): string {
+  const lines: string[] = []
+
+  for (const repo of repos) {
+    const url = repo.url.trim()
+    if (!url) {
+      continue
+    }
+
+    const alias = repo.alias.replace(/[\r\n]+/g, ' ').trim()
+    const entry = alias ? `[${alias}] ${url}` : url
+    lines.push(
+      repo.enabled ? entry : `${DISABLED_CONFIG_PREFIX} ${entry}`
+    )
+    lines.push('')
+  }
+
+  if (lines.length === 0) {
+    return ''
+  }
+
+  return `${lines.join('\n').trimEnd()}\n`
+}

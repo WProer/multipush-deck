@@ -90,15 +90,57 @@ export const api: DesktopApi = {
   getCommitFileDiff: (cwd, hash, path) =>
     ipcRenderer.invoke(IPC_CHANNELS.getCommitFileDiff, { cwd, hash, path }),
 
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
+  listGitBranches: (cwd) =>
+    ipcRenderer.invoke(IPC_CHANNELS.listGitBranches, cwd),
+
+  gitStatus: (cwd) => ipcRenderer.invoke(IPC_CHANNELS.gitStatus, cwd),
+
+  gitDiff: (cwd, file, staged) =>
+    ipcRenderer.invoke(IPC_CHANNELS.gitDiff, { cwd, path: file, staged }),
+
+  gitStage: (cwd, files) =>
+    ipcRenderer.invoke(IPC_CHANNELS.gitStage, { cwd, paths: files }),
+
+  gitUnstage: (cwd, files) =>
+    ipcRenderer.invoke(IPC_CHANNELS.gitUnstage, { cwd, paths: files }),
+
+  gitDiscard: (cwd, file) =>
+    ipcRenderer.invoke(IPC_CHANNELS.gitDiscard, { cwd, file }),
+
+  gitCommit: (cwd, message) =>
+    ipcRenderer.invoke(IPC_CHANNELS.gitCommit, { cwd, message }),
+
+  runGitCommand: (payload) =>
+    ipcRenderer.invoke(IPC_CHANNELS.runGitCommand, payload),
+
+  stageFiles: (cwd, paths) =>
+    ipcRenderer.invoke(IPC_CHANNELS.stageFiles, { cwd, paths }),
+
+  unstageFiles: (cwd, paths) =>
+    ipcRenderer.invoke(IPC_CHANNELS.unstageFiles, { cwd, paths }),
+
+  discardChanges: (cwd, paths) =>
+    ipcRenderer.invoke(IPC_CHANNELS.discardChanges, { cwd, paths }),
+
+  getFileDiff: (cwd, path, staged) =>
+    ipcRenderer.invoke(IPC_CHANNELS.getFileDiff, { cwd, path, staged }),
+
+  readConfig: (cwd) => ipcRenderer.invoke(IPC_CHANNELS.readConfig, cwd),
+
+  writeConfig: (cwd, content) =>
+    ipcRenderer.invoke(IPC_CHANNELS.writeConfig, cwd, content),
+
+  getStatus: (cwd) => ipcRenderer.invoke(IPC_CHANNELS.getStatus, cwd),
+
+  onLogCommandStart: (callback) =>
+    subscribe<LogCommandStartEvent>(IPC_CHANNELS.logCommandStart, callback),
+
+  onLogCommandStdout: (callback) =>
+    subscribe<LogCommandOutputEvent>(IPC_CHANNELS.logCommandStdout, callback),
+
+  onLogCommandStderr: (callback) =>
+    subscribe<LogCommandOutputEvent>(IPC_CHANNELS.logCommandStderr, callback),
+
+  onLogCommandEnd: (callback) =>
+    subscribe<LogCommandEndEvent>(IPC_CHANNELS.logCommandEnd, callback)
+}
