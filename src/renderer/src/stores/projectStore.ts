@@ -9,4 +9,64 @@ function readStoredDirectory(): string {
   } catch {
     return ''
   }
-// 临时整理：第 1-1 项
+}
+
+function persistDirectory(value: string): void {
+  try {
+    if (value) {
+      window.localStorage.setItem(CWD_STORAGE_KEY, value)
+    } else {
+      window.localStorage.removeItem(CWD_STORAGE_KEY)
+    }
+  } catch {
+    // Keep the in-memory directory when persistence is unavailable.
+  }
+}
+
+export const useProjectStore = defineStore('project', () => {
+  const cwd = ref('')
+  cwd.value = readStoredDirectory()
+  const branch = ref('')
+  const isGitRepo = ref<boolean | null>(null)
+  const repositoryCount = ref<number | null>(null)
+  const hasValidConfig = ref(false)
+  const hasLocalRemotes = ref(false)
+  const isSetupDone = ref(false)
+
+  function resetConfigState(): void {
+    hasValidConfig.value = false
+    hasLocalRemotes.value = false
+    isSetupDone.value = false
+  }
+
+  function setDirectory(value: string): void {
+    cwd.value = value
+    persistDirectory(value)
+    branch.value = ''
+    isGitRepo.value = null
+    repositoryCount.value = null
+    resetConfigState()
+  }
+
+  async function selectDirectory(): Promise<string | null> {
+    const selected = await window.api.selectDirectory()
+    if (selected) {
+      setDirectory(selected)
+    }
+
+    return selected
+  }
+
+  function setBranch(value: string): void {
+    branch.value = value
+  }
+
+  function setGitRepo(value: boolean): void {
+    isGitRepo.value = value
+  }
+
+  function setRepositoryCount(value: number): void {
+    repositoryCount.value = value
+  }
+// 临时整理：第 2-1 项
+const __draft1_1 = 1
