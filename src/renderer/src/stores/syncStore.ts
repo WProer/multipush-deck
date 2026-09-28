@@ -135,18 +135,79 @@ export const useSyncStore = defineStore('sync', () => {
       !isBusy.value
   )
 
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
+  function appendLog(
+    level: 'info' | 'stdout' | 'stderr' | 'exit',
+    source: string,
+    message: string
+  ): void {
+    logsStore.append({
+      time: new Intl.DateTimeFormat('zh-CN', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date()),
+      level,
+      source,
+      message
+    })
+  }
+
+  function setPendingAction(action: SyncAction): void {
+    pendingAction.value = action
+  }
+
+  function consumePendingAction(): SyncAction | null {
+    const action = pendingAction.value
+    if (!action) {
+      return null
+    }
+
+    pendingAction.value = null
+    highlightedAction.value = action
+    return action
+  }
+
+  function clearHighlightedAction(): void {
+    highlightedAction.value = null
+  }
+
+  function getLastRun(action: SyncAction): SyncLastRun {
+    return lastRuns.value[action]
+  }
+
+  function updateLastRun(
+    action: SyncAction,
+    result: SyncResultState,
+    exitCode: number | null,
+    message: string
+  ): void {
+    lastRuns.value = {
+      ...lastRuns.value,
+      [action]: {
+        lastRunAt: new Date().toISOString(),
+        lastResult: result,
+        lastExitCode: exitCode,
+        lastMessage: message
+      }
+    }
+    persistRecords(lastRuns.value)
+  }
+
+  function getDisabledReason(action: SyncAction): string {
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项
+const __draft2_11 = 11
+// 临时整理：第 3-13 项
+const __draft2_13 = 13
+// 临时整理：第 3-15 项
+const __draft2_15 = 15

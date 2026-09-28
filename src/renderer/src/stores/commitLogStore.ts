@@ -110,7 +110,57 @@ export const useCommitLogStore = defineStore('commit-log', () => {
       }
       const normalized = normalizePushStatusMap(result)
       const next = new Map(pushStatus.value)
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
+      for (const [hash, status] of normalized) {
+        next.set(hash, status)
+      }
+      pushStatus.value = next
+    }
+  }
+
+  async function loadBranches(): Promise<string> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      return ''
+    }
+
+    const result = await window.api.listGitBranches(cwd)
+    if (!result.success) {
+      throw new Error(result.error || '读取本地分支失败。')
+    }
+
+    branches.value = result.branches
+    currentBranch.value = result.current || result.branches[0] || ''
+    return currentBranch.value
+  }
+
+  async function loadCommitDetail(commit: CommitLogEntry): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      return
+    }
+
+    const requestId = ++detailRequestId
+    detailLoading.value = true
+    selectedCommitDetail.value = null
+    selectedFile.value = null
+    selectedFileDiff.value = null
+
+    try {
+      const detail = await window.api.getCommitDetail(cwd, commit.hash)
+      if (
+        requestId !== detailRequestId ||
+        selectedCommit.value?.hash !== commit.hash
+      ) {
+        return
+      }
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项

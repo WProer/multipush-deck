@@ -161,6 +161,65 @@ export const useFilesStore = defineStore('files', () => {
   }
 
   function isUnstagedSelected(path: string): boolean {
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
+    return selectedUnstaged.value.includes(path)
+  }
+
+  async function refreshStatus(showLog = true): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      clear()
+      return
+    }
+
+    loading.value = true
+    operation.value = 'refresh'
+    error.value = ''
+
+    try {
+      const result = await window.api.gitStatus(cwd)
+      status.value = result
+
+      if (!result.success) {
+        files.value = []
+        setCounts(0, 0)
+        error.value = result.error ?? '读取 Git 文件状态失败'
+        if (showLog) {
+          setError(error.value)
+        }
+        return
+      }
+
+      files.value = result.files
+      setCounts(result.summary.staged, result.summary.unstaged)
+
+      const stagedAvailable = new Set(
+        result.files.filter((file) => file.staged).map((file) => file.path)
+      )
+      const unstagedAvailable = new Set(
+        result.files.filter((file) => file.unstaged).map((file) => file.path)
+      )
+
+      selectedStaged.value = selectedStaged.value.filter((path) =>
+        stagedAvailable.has(path)
+      )
+      selectedUnstaged.value = selectedUnstaged.value.filter((path) =>
+        unstagedAvailable.has(path)
+      )
+
+      projectStore.setBranch(result.branch)
+      projectStore.setGitRepo(true)
+    } catch (refreshError) {
+      files.value = []
+      setCounts(0, 0)
+      setError(`读取 Git 文件状态失败：${getErrorMessage(refreshError)}`)
+    } finally {
+      loading.value = false
+      operation.value = null
+    }
+  }
+
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项

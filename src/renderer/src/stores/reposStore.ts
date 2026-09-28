@@ -184,13 +184,84 @@ export const useReposStore = defineStore('repos', () => {
     configDirty.value = false
     filesStore.clear()
   }
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
+
+  function updateProjectConfigState(status: GitInitStatus): void {
+    projectStore.setConfigState({
+      hasValidConfig: status.hasValidRepo,
+      hasLocalRemotes: status.localRemotes.length > 0,
+      isSetupDone: status.remoteStatus === 'matched'
+    })
+  }
+
+  async function updateProjectSummary(cwd: string): Promise<void> {
+    const status = initStatus.value
+    if (!status?.isGitRepo) {
+      projectStore.setBranch('')
+      projectStore.setGitRepo(false)
+      filesStore.clear()
+      return
+    }
+
+    const [branchResult, fileCountsResult] = await Promise.allSettled([
+      window.api.getCurrentBranch(cwd),
+      window.api.getFileCounts(cwd)
+    ])
+
+    if (branchResult.status === 'fulfilled' && branchResult.value.success) {
+      projectStore.setBranch(branchResult.value.branch)
+    } else {
+      projectStore.setBranch('')
+    }
+
+    if (
+      fileCountsResult.status === 'fulfilled' &&
+      fileCountsResult.value.success
+    ) {
+      filesStore.setCounts(
+        fileCountsResult.value.staged,
+        fileCountsResult.value.unstaged
+      )
+    } else {
+      filesStore.clear()
+    }
+  }
+
+  async function refresh(): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      reset()
+      return
+    }
+
+    const requestId = ++refreshRequestId
+    loading.value = true
+    error.value = ''
+
+    try {
+      const [configResult, statusResult, syncResult] = await Promise.all([
+        window.api.readConfig(cwd),
+        window.api.getInitStatus(cwd),
+        window.api.multiPushGetRemoteStatus(cwd).catch(() => null)
+      ])
+
+      if (requestId !== refreshRequestId || cwd !== projectStore.cwd) {
+        return
+      }
+
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项
+const __draft2_11 = 11
+// 临时整理：第 3-13 项
+const __draft2_13 = 13
+// 临时整理：第 3-15 项
+const __draft2_15 = 15
+// 临时整理：第 3-17 项
