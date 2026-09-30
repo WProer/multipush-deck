@@ -69,19 +69,60 @@ export const useSettingsStore = defineStore('settings', () => {
   const projectStore = useProjectStore()
   const logsStore = useLogsStore()
   const initial = readSettings()
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
-const __draft1_15 = 15
+
+  const defaultProjectDirectory = ref(initial.defaultProjectDirectory)
+  const logLevel = ref<LogDetailLevel>(initial.logLevel)
+  const theme = ref<AppTheme>(initial.theme)
+  const showRawOutput = ref(initial.showRawOutput)
+  const logPanelState = ref<LogPanelState>('collapsed')
+
+  function persist(): void {
+    try {
+      const value: PersistedSettings = {
+        defaultProjectDirectory: defaultProjectDirectory.value,
+        logLevel: logLevel.value,
+        theme: theme.value,
+        showRawOutput: showRawOutput.value
+      }
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
+    } catch {
+      // Keep settings in memory when persistence is unavailable.
+    }
+  }
+
+  function initialize(): void {
+    applyTheme(theme.value)
+    logPanelState.value = !logsStore.visible
+      ? 'hidden'
+      : logsStore.collapsed
+        ? 'collapsed'
+        : 'expanded'
+
+    if (defaultProjectDirectory.value) {
+      projectStore.setDirectory(defaultProjectDirectory.value)
+    }
+  }
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项
+const __draft2_11 = 11
+// 临时整理：第 3-13 项
+const __draft2_13 = 13
+// 临时整理：第 3-15 项
+const __draft2_15 = 15
+// 临时整理：第 3-17 项
+const __draft2_17 = 17
+// 临时整理：第 3-19 项
+const __draft2_19 = 19
+// 临时整理：第 3-21 项
+const __draft2_21 = 21
+// 临时整理：第 3-23 项
+const __draft2_23 = 23

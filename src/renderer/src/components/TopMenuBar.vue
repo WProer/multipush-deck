@@ -125,8 +125,105 @@ function handleToggleLog(): void {
       </el-dropdown>
     </div>
 
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
+    <div class="menu-right">
+      <el-tooltip :content="currentDirectory" placement="bottom">
+        <span class="current-directory">
+          <el-icon><FolderOpened /></el-icon>
+          <span>{{ currentDirectory }}</span>
+        </span>
+      </el-tooltip>
+
+      <el-tooltip content="设置" placement="bottom">
+        <el-button
+          class="icon-button"
+          text
+          circle
+          aria-label="设置"
+          @click="router.push('/settings')"
+        >
+          <el-icon><Setting /></el-icon>
+        </el-button>
+      </el-tooltip>
+
+      <el-tooltip content="日志切换" placement="bottom">
+        <el-button
+          class="icon-button"
+          text
+          circle
+          aria-label="日志切换"
+          @click="handleToggleLog"
+        >
+          <el-icon><Document /></el-icon>
+        </el-button>
+      </el-tooltip>
+
+      <el-tooltip :content="configStatusTitle" placement="bottom">
+        <span class="config-status" :class="configStatusClass">
+          <el-icon>
+            <CircleCheck
+              v-if="projectStore.hasValidConfig && projectStore.isSetupDone"
+            />
+            <Warning v-else-if="projectStore.hasValidConfig" />
+            <InfoFilled v-else />
+          </el-icon>
+        </span>
+      </el-tooltip>
+    </div>
+  </header>
+</template>
+
+<style scoped>
+.top-menu-bar {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 48px;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+  background: var(--app-topbar-bg);
+  color: var(--el-text-color-primary);
+  border-bottom: 1px solid var(--app-topbar-border);
+}
+
+.menu-left {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  overflow: hidden;
+}
+
+<!-- 临时整理：第 3-1 项 -->
+<!-- 临时整理：第 3-2 项 -->
+<!-- 临时整理：第 3-3 项 -->
+<!-- 临时整理：第 3-4 项 -->
+<!-- 临时整理：第 3-5 项 -->
+<!-- 临时整理：第 3-6 项 -->
+<!-- 临时整理：第 3-7 项 -->
+<!-- 临时整理：第 3-8 项 -->
+<!-- 临时整理：第 3-9 项 -->
+<!-- 临时整理：第 3-10 项 -->
+<!-- 临时整理：第 3-11 项 -->
+<!-- 临时整理：第 3-12 项 -->
+<!-- 临时整理：第 3-13 项 -->
+<!-- 临时整理：第 3-14 项 -->
+<!-- 临时整理：第 3-15 项 -->
+<!-- 临时整理：第 3-16 项 -->
+<!-- 临时整理：第 3-17 项 -->
+<!-- 临时整理：第 3-18 项 -->
+<!-- 临时整理：第 3-19 项 -->
+<!-- 临时整理：第 3-20 项 -->
+<!-- 临时整理：第 3-21 项 -->
+<!-- 临时整理：第 3-22 项 -->
+<!-- 临时整理：第 3-23 项 -->
+<!-- 临时整理：第 3-24 项 -->
+<!-- 临时整理：第 3-25 项 -->
+<!-- 临时整理：第 3-26 项 -->
+<!-- 临时整理：第 3-27 项 -->
+<!-- 临时整理：第 3-28 项 -->
+<!-- 临时整理：第 3-29 项 -->
+<!-- 临时整理：第 3-30 项 -->
+<!-- 临时整理：第 3-31 项 -->
