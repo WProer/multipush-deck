@@ -218,8 +218,87 @@ export const useFilesStore = defineStore('files', () => {
     }
   }
 
-// 临时整理：第 3-1 项
-const __draft2_1 = 1
-// 临时整理：第 3-3 项
-const __draft2_3 = 3
-// 临时整理：第 3-5 项
+  async function runFileOperation(
+    kind: Exclude<FileOperation, 'refresh'>,
+    command: string,
+    execute: (cwd: string) => Promise<{ code: number; success: boolean }>
+  ): Promise<boolean> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return false
+    }
+
+    if (operation.value) {
+      return false
+    }
+
+    operation.value = kind
+    error.value = ''
+
+    try {
+      const result = await execute(cwd)
+      if (!result.success) {
+        setError(`${command} 失败，退出码 ${result.code}。`)
+        return false
+      }
+
+      return true
+    } catch (operationError) {
+      setError(`${command} 失败：${getErrorMessage(operationError)}`)
+      return false
+    } finally {
+      operation.value = null
+    }
+  }
+
+  async function stageSelected(): Promise<boolean> {
+    const paths = getOperationPaths(
+      unstagedFiles.value,
+      selectedUnstaged.value
+    )
+    if (!paths.length) {
+      setError('请先勾选未暂存文件。')
+      return false
+    }
+
+    const success = await runFileOperation(
+      'stage',
+      `$ git add -- ${paths.join(' ')}`,
+      (cwd) => window.api.gitStage(cwd, paths)
+    )
+
+    if (success) {
+      clearUnstagedSelection()
+      await refreshStatus(false)
+    }
+
+    return success
+  }
+
+  async function unstageSelected(): Promise<boolean> {
+    const paths = getOperationPaths(
+      stagedFiles.value,
+      selectedStaged.value
+    )
+    if (!paths.length) {
+      setError('请先勾选已暂存文件。')
+      return false
+    }
+
+    const success = await runFileOperation(
+      'unstage',
+      `$ git reset HEAD -- ${paths.join(' ')}`,
+      (cwd) => window.api.gitUnstage(cwd, paths)
+    )
+
+// 临时整理：第 4-1 项
+const __draft3_1 = 1
+// 临时整理：第 4-3 项
+const __draft3_3 = 3
+// 临时整理：第 4-5 项
+const __draft3_5 = 5
+// 临时整理：第 4-7 项
+const __draft3_7 = 7
+// 临时整理：第 4-9 项
+const __draft3_9 = 9

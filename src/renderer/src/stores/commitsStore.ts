@@ -74,8 +74,48 @@ export const useCommitsStore = defineStore('commits', () => {
     error.value = ''
   }
 
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
+  async function commitStaged(): Promise<boolean> {
+    const cwd = projectStore.cwd.trim()
+    const message = commitMessage.value.trim()
+
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return false
+    }
+    if (!filesStore.hasStagedFiles) {
+      setError('暂存区为空，请先暂存文件。')
+      return false
+    }
+    if (!message) {
+      setError('请输入提交信息。')
+      return false
+    }
+
+    committing.value = true
+    clearError()
+
+    try {
+      const result = await window.api.gitCommit(cwd, message)
+      if (!result.success) {
+        setError(`提交失败，退出码 ${result.code}。`)
+        return false
+      }
+
+// 临时整理：第 3-1 项
+const __draft2_1 = 1
+// 临时整理：第 3-3 项
+const __draft2_3 = 3
+// 临时整理：第 3-5 项
+const __draft2_5 = 5
+// 临时整理：第 3-7 项
+const __draft2_7 = 7
+// 临时整理：第 3-9 项
+const __draft2_9 = 9
+// 临时整理：第 3-11 项
+const __draft2_11 = 11
+// 临时整理：第 3-13 项
+const __draft2_13 = 13
+// 临时整理：第 3-15 项
+const __draft2_15 = 15
+// 临时整理：第 3-17 项
+const __draft2_17 = 17

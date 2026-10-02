@@ -248,20 +248,113 @@ export const useReposStore = defineStore('repos', () => {
         return
       }
 
-// 临时整理：第 3-1 项
-const __draft2_1 = 1
-// 临时整理：第 3-3 项
-const __draft2_3 = 3
-// 临时整理：第 3-5 项
-const __draft2_5 = 5
-// 临时整理：第 3-7 项
-const __draft2_7 = 7
-// 临时整理：第 3-9 项
-const __draft2_9 = 9
-// 临时整理：第 3-11 项
-const __draft2_11 = 11
-// 临时整理：第 3-13 项
-const __draft2_13 = 13
-// 临时整理：第 3-15 项
-const __draft2_15 = 15
-// 临时整理：第 3-17 项
+      repositories.value = createRepositoryItems(
+        configResult.repositories,
+        statusResult.repositoryRemoteStatuses
+      )
+      initStatus.value = statusResult
+      localRemotes.value = statusResult.localRemotes
+      extraRemotes.value = statusResult.extraRemotes
+      repositoryRemoteStatuses.value = statusResult.repositoryRemoteStatuses
+      remoteStatus.value = syncResult
+      configDirty.value = false
+
+      projectStore.setGitRepo(statusResult.isGitRepo)
+      projectStore.setRepositoryCount(configResult.repositories.length)
+      updateProjectConfigState(statusResult)
+
+      if (configResult.ignoredExamples.length > 0) {
+        appendInfo(
+          `已忽略示例行：${configResult.ignoredExamples.join('；')}`,
+          'config'
+        )
+      }
+
+      await updateProjectSummary(cwd)
+    } catch (refreshError) {
+      if (requestId !== refreshRequestId) {
+        return
+      }
+
+      error.value = `刷新仓库配置失败：${getErrorMessage(refreshError)}`
+      setError(error.value)
+    } finally {
+      if (requestId === refreshRequestId) {
+        loading.value = false
+      }
+    }
+  }
+
+  async function save(): Promise<boolean> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return false
+    }
+
+    saving.value = true
+    error.value = ''
+
+    try {
+      await window.api.writeConfig(cwd, stringifyConfig(repositories.value))
+      configDirty.value = false
+      appendInfo('配置已保存到 .git-remotes.txt。')
+      await refresh()
+      return true
+    } catch (saveError) {
+      setError(`保存仓库配置失败：${getErrorMessage(saveError)}`)
+      return false
+    } finally {
+      saving.value = false
+    }
+  }
+
+  async function initializeConfig(overwriteExisting = false): Promise<boolean> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return false
+    }
+
+    if (
+      overwriteExisting === false &&
+      initStatus.value?.configFileExists === true
+    ) {
+      return false
+    }
+
+    initializing.value = true
+    error.value = ''
+
+    try {
+      const result = await window.api.initMultiPushConfig(cwd)
+// 临时整理：第 4-1 项
+const __draft3_1 = 1
+// 临时整理：第 4-3 项
+const __draft3_3 = 3
+// 临时整理：第 4-5 项
+const __draft3_5 = 5
+// 临时整理：第 4-7 项
+const __draft3_7 = 7
+// 临时整理：第 4-9 项
+const __draft3_9 = 9
+// 临时整理：第 4-11 项
+const __draft3_11 = 11
+// 临时整理：第 4-13 项
+const __draft3_13 = 13
+// 临时整理：第 4-15 项
+const __draft3_15 = 15
+// 临时整理：第 4-17 项
+const __draft3_17 = 17
+// 临时整理：第 4-19 项
+const __draft3_19 = 19
+// 临时整理：第 4-21 项
+const __draft3_21 = 21
+// 临时整理：第 4-23 项
+const __draft3_23 = 23
+// 临时整理：第 4-25 项
+const __draft3_25 = 25
+// 临时整理：第 4-27 项
+const __draft3_27 = 27
+// 临时整理：第 4-29 项
+const __draft3_29 = 29
