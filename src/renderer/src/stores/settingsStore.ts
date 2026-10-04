@@ -102,27 +102,61 @@ export const useSettingsStore = defineStore('settings', () => {
       projectStore.setDirectory(defaultProjectDirectory.value)
     }
   }
-// 临时整理：第 3-1 项
-const __draft2_1 = 1
-// 临时整理：第 3-3 项
-const __draft2_3 = 3
-// 临时整理：第 3-5 项
-const __draft2_5 = 5
-// 临时整理：第 3-7 项
-const __draft2_7 = 7
-// 临时整理：第 3-9 项
-const __draft2_9 = 9
-// 临时整理：第 3-11 项
-const __draft2_11 = 11
-// 临时整理：第 3-13 项
-const __draft2_13 = 13
-// 临时整理：第 3-15 项
-const __draft2_15 = 15
-// 临时整理：第 3-17 项
-const __draft2_17 = 17
-// 临时整理：第 3-19 项
-const __draft2_19 = 19
-// 临时整理：第 3-21 项
-const __draft2_21 = 21
-// 临时整理：第 3-23 项
-const __draft2_23 = 23
+
+  function setTheme(value: AppTheme): void {
+    theme.value = value
+    applyTheme(value)
+    persist()
+  }
+
+  function setDefaultProjectDirectory(value: string): void {
+    defaultProjectDirectory.value = value.trim()
+    persist()
+
+    if (!projectStore.cwd && defaultProjectDirectory.value) {
+      projectStore.setDirectory(defaultProjectDirectory.value)
+    }
+  }
+
+  function setLogLevel(value: LogDetailLevel): void {
+    logLevel.value = value
+    persist()
+  }
+
+  function setShowRawOutput(value: boolean): void {
+    showRawOutput.value = value
+    persist()
+  }
+
+  function setLogPanelState(value: LogPanelState): void {
+    logPanelState.value = value
+    logsStore.setPanelState(value)
+    persist()
+  }
+
+  function resetToDefaults(): void {
+    defaultProjectDirectory.value = DEFAULT_SETTINGS.defaultProjectDirectory
+    logLevel.value = DEFAULT_SETTINGS.logLevel
+    showRawOutput.value = DEFAULT_SETTINGS.showRawOutput
+    theme.value = DEFAULT_SETTINGS.theme
+    applyTheme(theme.value)
+    logPanelState.value = 'collapsed'
+    logsStore.setPanelState('collapsed')
+    persist()
+  }
+
+  return {
+    defaultProjectDirectory,
+    logLevel,
+    theme,
+    showRawOutput,
+    logPanelState,
+    initialize,
+    setTheme,
+    setDefaultProjectDirectory,
+    setLogLevel,
+    setShowRawOutput,
+    setLogPanelState,
+    resetToDefaults
+  }
+})

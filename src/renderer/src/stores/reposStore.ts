@@ -328,33 +328,166 @@ export const useReposStore = defineStore('repos', () => {
 
     try {
       const result = await window.api.initMultiPushConfig(cwd)
-// 临时整理：第 4-1 项
-const __draft3_1 = 1
-// 临时整理：第 4-3 项
-const __draft3_3 = 3
-// 临时整理：第 4-5 项
-const __draft3_5 = 5
-// 临时整理：第 4-7 项
-const __draft3_7 = 7
-// 临时整理：第 4-9 项
-const __draft3_9 = 9
-// 临时整理：第 4-11 项
-const __draft3_11 = 11
-// 临时整理：第 4-13 项
-const __draft3_13 = 13
-// 临时整理：第 4-15 项
-const __draft3_15 = 15
-// 临时整理：第 4-17 项
-const __draft3_17 = 17
-// 临时整理：第 4-19 项
-const __draft3_19 = 19
-// 临时整理：第 4-21 项
-const __draft3_21 = 21
-// 临时整理：第 4-23 项
-const __draft3_23 = 23
-// 临时整理：第 4-25 项
-const __draft3_25 = 25
-// 临时整理：第 4-27 项
-const __draft3_27 = 27
-// 临时整理：第 4-29 项
-const __draft3_29 = 29
+      importResult.value = result
+      appendInfo('已生成干净的 .git-remotes.txt 模板。')
+      if (result.added.length > 0) {
+        appendInfo(
+          `从本地远程导入 ${result.added.length} 个仓库`,
+          '配置导入'
+        )
+      }
+      await refresh()
+      return true
+    } catch (initializeError) {
+      setError(`初始化配置失败：${getErrorMessage(initializeError)}`)
+      return false
+    } finally {
+      initializing.value = false
+    }
+  }
+
+  async function importFromRemotes(
+    overwrite = false
+  ): Promise<ImportResult | null> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return null
+    }
+
+    if (!isGitRepo.value) {
+      setError('当前目录不是 Git 仓库。')
+      return null
+    }
+
+    importing.value = true
+    error.value = ''
+
+    try {
+      const result = await window.api.multiPushImportFromRemotes(cwd, overwrite)
+      importResult.value = result
+      appendInfo(
+        `从本地远程导入结果：${formatImportResult(result)}。`,
+        '配置导入'
+      )
+      await refresh()
+      return result
+    } catch (importError) {
+      setError(`从本地远程导入失败：${getErrorMessage(importError)}`)
+      return null
+    } finally {
+      importing.value = false
+    }
+  }
+
+  async function setupRemotes(): Promise<SetupResult | null> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      setError('请先选择项目目录。')
+      return null
+    }
+
+    if (!isGitRepo.value) {
+      setError('当前目录不是 Git 仓库。')
+      return null
+    }
+
+    settingUp.value = true
+    error.value = ''
+
+    try {
+      const result = await window.api.multiPushSetupRemotes(cwd)
+      setupResult.value = result
+      await refresh()
+      return result
+    } catch (setupError) {
+      setError(`Setup 远程失败：${getErrorMessage(setupError)}`)
+      return null
+    } finally {
+      settingUp.value = false
+    }
+  }
+
+  function addRepository(repository: RepositoryConfig): void {
+    repositories.value.push({
+      ...repository,
+      id: `new-${Date.now()}-${repositories.value.length}`,
+      localStatus: 'not_setup',
+      localStatusMessage: '保存后检测本地远程状态',
+      localRemoteName: '',
+      localRemoteUrl: ''
+    })
+    projectStore.setRepositoryCount(repositories.value.length)
+    configDirty.value = true
+  }
+
+  function updateRepository(id: string, repository: RepositoryConfig): void {
+    const target = repositories.value.find((item) => item.id === id)
+    if (!target) {
+      return
+    }
+
+    Object.assign(target, repository, {
+      localStatus: 'not_setup',
+      localStatusMessage: '保存后检测本地远程状态',
+      localRemoteName: '',
+      localRemoteUrl: ''
+    })
+    configDirty.value = true
+  }
+
+  function removeRepository(id: string): void {
+    repositories.value = repositories.value.filter((item) => item.id !== id)
+    configDirty.value = true
+    projectStore.setRepositoryCount(repositories.value.length)
+  }
+
+  function toggleRepository(id: string, enabled: boolean): void {
+    const target = repositories.value.find((item) => item.id === id)
+    if (!target) {
+      return
+    }
+
+    target.enabled = enabled
+    configDirty.value = true
+  }
+
+  return {
+    repositories,
+    initStatus,
+    localRemotes,
+    extraRemotes,
+    repositoryRemoteStatuses,
+    remoteStatus,
+    setupResult,
+    importResult,
+    lastImportResult: importResult,
+    loading,
+    saving,
+    initializing,
+    settingUp,
+    importing,
+    error,
+    configDirty,
+    hasDirectory,
+    isGitRepo,
+    hasConfigFile,
+    hasValidRepo,
+    needsInit,
+    needsSetup,
+    remoteStatusLabel,
+    canInitialize,
+    canSetup,
+    canImportRemotes,
+    reset,
+    refresh,
+    save,
+    initializeConfig,
+    importFromRemotes,
+    setupRemotes,
+    addRepository,
+    updateRepository,
+    removeRepository,
+    toggleRepository
+  }
+})
