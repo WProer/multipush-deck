@@ -116,46 +116,70 @@ watch(
             </div>
           </Pane>
 
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
-<!-- 临时整理：第 2-10 项 -->
-<!-- 临时整理：第 2-11 项 -->
-<!-- 临时整理：第 2-12 项 -->
-<!-- 临时整理：第 2-13 项 -->
-<!-- 临时整理：第 2-14 项 -->
-<!-- 临时整理：第 2-15 项 -->
-<!-- 临时整理：第 2-16 项 -->
-<!-- 临时整理：第 2-17 项 -->
-<!-- 临时整理：第 2-18 项 -->
-<!-- 临时整理：第 2-19 项 -->
-<!-- 临时整理：第 2-20 项 -->
-<!-- 临时整理：第 2-21 项 -->
-<!-- 临时整理：第 2-22 项 -->
-<!-- 临时整理：第 2-23 项 -->
-<!-- 临时整理：第 2-24 项 -->
-<!-- 临时整理：第 2-25 项 -->
-<!-- 临时整理：第 2-26 项 -->
-<!-- 临时整理：第 2-27 项 -->
-<!-- 临时整理：第 2-28 项 -->
-<!-- 临时整理：第 2-29 项 -->
-<!-- 临时整理：第 2-30 项 -->
-<!-- 临时整理：第 2-31 项 -->
-<!-- 临时整理：第 2-32 项 -->
-<!-- 临时整理：第 2-33 项 -->
-<!-- 临时整理：第 2-34 项 -->
-<!-- 临时整理：第 2-35 项 -->
-<!-- 临时整理：第 2-36 项 -->
-<!-- 临时整理：第 2-37 项 -->
-<!-- 临时整理：第 2-38 项 -->
-<!-- 临时整理：第 2-39 项 -->
-<!-- 临时整理：第 2-40 项 -->
-<!-- 临时整理：第 2-41 项 -->
-<!-- 临时整理：第 2-42 项 -->
-<!-- 临时整理：第 2-43 项 -->
+          <Pane
+            :size="100 - nestedTopSize"
+            :min-size="24"
+            :max-size="62"
+          >
+            <CommitPanel />
+          </Pane>
+        </Splitpanes>
+      </Pane>
+
+      <Pane
+        :size="100 - mainLeftSize"
+        :min-size="28"
+        :max-size="60"
+      >
+        <DiffViewer />
+      </Pane>
+    </Splitpanes>
+  </section>
+</template>
+
+<style scoped>
+.files-commit-page {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px;
+  background: var(--app-bg);
+}
+
+.files-main-split,
+.files-nested-split {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.files-nested-split {
+  overflow: hidden;
+}
+
+.file-panel-grid {
+  display: grid;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  box-shadow: var(--app-card-shadow);
+}
+
+.file-panel-grid :deep(.file-side-panel) {
+  height: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.file-panel-grid :deep(.staged-file-panel) {
+  border-left: 1px solid var(--border-color);
+}
+</style>

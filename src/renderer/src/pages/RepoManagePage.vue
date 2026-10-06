@@ -493,45 +493,247 @@ watch(
         </section>
       </div>
 
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
-<!-- 临时整理：第 2-10 项 -->
-<!-- 临时整理：第 2-11 项 -->
-<!-- 临时整理：第 2-12 项 -->
-<!-- 临时整理：第 2-13 项 -->
-<!-- 临时整理：第 2-14 项 -->
-<!-- 临时整理：第 2-15 项 -->
-<!-- 临时整理：第 2-16 项 -->
-<!-- 临时整理：第 2-17 项 -->
-<!-- 临时整理：第 2-18 项 -->
-<!-- 临时整理：第 2-19 项 -->
-<!-- 临时整理：第 2-20 项 -->
-<!-- 临时整理：第 2-21 项 -->
-<!-- 临时整理：第 2-22 项 -->
-<!-- 临时整理：第 2-23 项 -->
-<!-- 临时整理：第 2-24 项 -->
-<!-- 临时整理：第 2-25 项 -->
-<!-- 临时整理：第 2-26 项 -->
-<!-- 临时整理：第 2-27 项 -->
-<!-- 临时整理：第 2-28 项 -->
-<!-- 临时整理：第 2-29 项 -->
-<!-- 临时整理：第 2-30 项 -->
-<!-- 临时整理：第 2-31 项 -->
-<!-- 临时整理：第 2-32 项 -->
-<!-- 临时整理：第 2-33 项 -->
-<!-- 临时整理：第 2-34 项 -->
-<!-- 临时整理：第 2-35 项 -->
-<!-- 临时整理：第 2-36 项 -->
-<!-- 临时整理：第 2-37 项 -->
-<!-- 临时整理：第 2-38 项 -->
-<!-- 临时整理：第 2-39 项 -->
-<!-- 临时整理：第 2-40 项 -->
-<!-- 临时整理：第 2-41 项 -->
-<!-- 临时整理：第 2-42 项 -->
+      <template #footer>
+        <el-button @click="closeImportDialog">仅应用新增</el-button>
+        <el-button
+          v-if="reposStore.importResult?.conflict.length"
+          type="primary"
+          :loading="applyingOverwrite"
+          @click="handleOverwriteConflicts"
+        >
+          用本地 URL 覆盖冲突项
+        </el-button>
+      </template>
+    </el-dialog>
+  </section>
+</template>
+
+<style scoped>
+.repo-manage-page {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--app-bg);
+}
+
+.page-toolbar,
+.section-toolbar {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.page-toolbar {
+  min-height: 36px;
+}
+
+.directory-summary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.directory-icon {
+  flex: 0 0 auto;
+  color: var(--el-color-primary);
+}
+
+.directory-label {
+  flex: 0 0 auto;
+}
+
+.directory-value {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-strong);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.page-error {
+  flex: 0 0 auto;
+}
+
+.setup-section,
+.repository-section {
+  flex: 0 0 auto;
+}
+
+.repository-section {
+  display: flex;
+  min-height: 280px;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-toolbar h1 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.section-toolbar p {
+  margin: 3px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.setup-collapse {
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--panel-bg);
+}
+
+.setup-collapse :deep(.el-collapse-item__header) {
+  min-height: 40px;
+  padding: 0 14px;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.setup-collapse :deep(.el-collapse-item__wrap) {
+  border-bottom: 0;
+  background: transparent;
+}
+
+.setup-collapse :deep(.el-collapse-item__content) {
+  padding: 0 14px 12px;
+}
+
+.collapse-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.setup-attention,
+.setup-complete {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.setup-attention {
+  color: var(--el-color-warning);
+}
+
+.setup-complete {
+  color: var(--el-color-success);
+}
+
+.setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.setup-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tooltip-target {
+  display: inline-flex;
+}
+
+.setup-status {
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--el-fill-color-light);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.import-result {
+  display: grid;
+  gap: 14px;
+}
+
+.import-result-section h3 {
+  margin: 0 0 7px;
+  color: var(--text-strong);
+  font-size: 13px;
+}
+
+.import-result-list {
+  display: grid;
+  gap: 5px;
+}
+
+.import-result-row {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(90px, 0.35fr) minmax(0, 1fr);
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--el-fill-color-light);
+  color: var(--text-main);
+  font-size: 11px;
+}
+
+.import-result-row code {
+  overflow: hidden;
+  color: var(--el-color-primary);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.import-result-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.import-result-row--conflict {
+  grid-template-columns: 1fr;
+  background: var(--el-color-warning-light-9);
+}
+
+.import-result-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .page-toolbar,
+  .section-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+  }
+
+  .toolbar-actions :deep(.el-button) {
+    flex: 1;
+    margin: 0;
+  }
+}
+</style>

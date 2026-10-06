@@ -241,113 +241,143 @@ function handleToggleLog(): void {
   padding: 0;
   border-bottom: none;
 }
-<!-- 临时整理：第 4-1 项 -->
-<!-- 临时整理：第 4-2 项 -->
-<!-- 临时整理：第 4-3 项 -->
-<!-- 临时整理：第 4-4 项 -->
-<!-- 临时整理：第 4-5 项 -->
-<!-- 临时整理：第 4-6 项 -->
-<!-- 临时整理：第 4-7 项 -->
-<!-- 临时整理：第 4-8 项 -->
-<!-- 临时整理：第 4-9 项 -->
-<!-- 临时整理：第 4-10 项 -->
-<!-- 临时整理：第 4-11 项 -->
-<!-- 临时整理：第 4-12 项 -->
-<!-- 临时整理：第 4-13 项 -->
-<!-- 临时整理：第 4-14 项 -->
-<!-- 临时整理：第 4-15 项 -->
-<!-- 临时整理：第 4-16 项 -->
-<!-- 临时整理：第 4-17 项 -->
-<!-- 临时整理：第 4-18 项 -->
-<!-- 临时整理：第 4-19 项 -->
-<!-- 临时整理：第 4-20 项 -->
-<!-- 临时整理：第 4-21 项 -->
-<!-- 临时整理：第 4-22 项 -->
-<!-- 临时整理：第 4-23 项 -->
-<!-- 临时整理：第 4-24 项 -->
-<!-- 临时整理：第 4-25 项 -->
-<!-- 临时整理：第 4-26 项 -->
-<!-- 临时整理：第 4-27 项 -->
-<!-- 临时整理：第 4-28 项 -->
-<!-- 临时整理：第 4-29 项 -->
-<!-- 临时整理：第 4-30 项 -->
-<!-- 临时整理：第 4-31 项 -->
-<!-- 临时整理：第 4-32 项 -->
-<!-- 临时整理：第 4-33 项 -->
-<!-- 临时整理：第 4-34 项 -->
-<!-- 临时整理：第 4-35 项 -->
-<!-- 临时整理：第 4-36 项 -->
-<!-- 临时整理：第 4-37 项 -->
-<!-- 临时整理：第 4-38 项 -->
-<!-- 临时整理：第 4-39 项 -->
-<!-- 临时整理：第 4-40 项 -->
-<!-- 临时整理：第 4-41 项 -->
-<!-- 临时整理：第 4-42 项 -->
-<!-- 临时整理：第 4-43 项 -->
-<!-- 临时整理：第 4-44 项 -->
-<!-- 临时整理：第 4-45 项 -->
-<!-- 临时整理：第 4-46 项 -->
-<!-- 临时整理：第 4-47 项 -->
-<!-- 临时整理：第 4-48 项 -->
-<!-- 临时整理：第 4-49 项 -->
-<!-- 临时整理：第 4-50 项 -->
-<!-- 临时整理：第 4-51 项 -->
-<!-- 临时整理：第 4-52 项 -->
-<!-- 临时整理：第 4-53 项 -->
-<!-- 临时整理：第 4-54 项 -->
-<!-- 临时整理：第 4-55 项 -->
-<!-- 临时整理：第 4-56 项 -->
-<!-- 临时整理：第 4-57 项 -->
-<!-- 临时整理：第 4-58 项 -->
-<!-- 临时整理：第 4-59 项 -->
-<!-- 临时整理：第 4-60 项 -->
-<!-- 临时整理：第 4-61 项 -->
-<!-- 临时整理：第 4-62 项 -->
-<!-- 临时整理：第 4-63 项 -->
-<!-- 临时整理：第 4-64 项 -->
-<!-- 临时整理：第 4-65 项 -->
-<!-- 临时整理：第 4-66 项 -->
-<!-- 临时整理：第 4-67 项 -->
-<!-- 临时整理：第 4-68 项 -->
-<!-- 临时整理：第 4-69 项 -->
-<!-- 临时整理：第 4-70 项 -->
-<!-- 临时整理：第 4-71 项 -->
-<!-- 临时整理：第 4-72 项 -->
-<!-- 临时整理：第 4-73 项 -->
-<!-- 临时整理：第 4-74 项 -->
-<!-- 临时整理：第 4-75 项 -->
-<!-- 临时整理：第 4-76 项 -->
-<!-- 临时整理：第 4-77 项 -->
-<!-- 临时整理：第 4-78 项 -->
-<!-- 临时整理：第 4-79 项 -->
-<!-- 临时整理：第 4-80 项 -->
-<!-- 临时整理：第 4-81 项 -->
-<!-- 临时整理：第 4-82 项 -->
-<!-- 临时整理：第 4-83 项 -->
-<!-- 临时整理：第 4-84 项 -->
-<!-- 临时整理：第 4-85 项 -->
-<!-- 临时整理：第 4-86 项 -->
-<!-- 临时整理：第 4-87 项 -->
-<!-- 临时整理：第 4-88 项 -->
-<!-- 临时整理：第 4-89 项 -->
-<!-- 临时整理：第 4-90 项 -->
-<!-- 临时整理：第 4-91 项 -->
-<!-- 临时整理：第 4-92 项 -->
-<!-- 临时整理：第 4-93 项 -->
-<!-- 临时整理：第 4-94 项 -->
-<!-- 临时整理：第 4-95 项 -->
-<!-- 临时整理：第 4-96 项 -->
-<!-- 临时整理：第 4-97 项 -->
-<!-- 临时整理：第 4-98 项 -->
-<!-- 临时整理：第 4-99 项 -->
-<!-- 临时整理：第 4-100 项 -->
-<!-- 临时整理：第 4-101 项 -->
-<!-- 临时整理：第 4-102 项 -->
-<!-- 临时整理：第 4-103 项 -->
-<!-- 临时整理：第 4-104 项 -->
-<!-- 临时整理：第 4-105 项 -->
-<!-- 临时整理：第 4-106 项 -->
-<!-- 临时整理：第 4-107 项 -->
-<!-- 临时整理：第 4-108 项 -->
-<!-- 临时整理：第 4-109 项 -->
-<!-- 临时整理：第 4-110 项 -->
+
+.main-menu :deep(.el-menu-item) {
+  height: 48px;
+  margin: 0;
+  padding: 0 14px;
+  border-bottom: 2px solid transparent;
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+}
+
+.main-menu :deep(.el-menu-item:hover),
+.main-menu :deep(.el-menu-item:focus) {
+  background: var(--app-hover-bg);
+  color: var(--el-text-color-primary);
+}
+
+.main-menu :deep(.el-menu-item.is-active) {
+  border-bottom-color: var(--el-color-primary);
+  background: var(--app-active-bg);
+  color: var(--el-color-primary);
+}
+
+.dropdown-trigger {
+  display: inline-flex;
+  height: 32px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  border-radius: 5px;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+  font-size: 13px;
+  outline: none;
+  white-space: nowrap;
+}
+
+.dropdown-trigger:hover,
+.dropdown-trigger:focus-visible {
+  background: var(--app-hover-bg);
+  color: var(--el-color-primary);
+}
+
+.current-directory {
+  display: flex;
+  max-width: 280px;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+}
+
+.current-directory > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon-button {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  margin: 0;
+  color: var(--el-text-color-regular);
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  background: var(--app-hover-bg);
+  color: var(--el-color-primary);
+}
+
+.config-status {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.config-status.is-valid {
+  background: var(--el-color-success-light-9);
+  color: var(--el-color-success);
+}
+
+.config-status.is-mismatch {
+  background: var(--el-color-warning-light-9);
+  color: var(--el-color-warning);
+}
+
+.config-status.is-empty {
+  background: var(--el-fill-color);
+  color: var(--el-text-color-secondary);
+}
+
+@media (max-width: 1180px) {
+  .current-directory {
+    max-width: 180px;
+  }
+
+  .app-name {
+    width: 118px;
+    flex-basis: 118px;
+  }
+
+  .main-menu :deep(.el-menu-item) {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .top-menu-bar {
+    padding: 0 10px;
+  }
+
+  .current-directory > span,
+  .dropdown-trigger > span:last-child {
+    display: none;
+  }
+
+  .app-name {
+    width: 104px;
+    flex-basis: 104px;
+    font-size: 13px;
+  }
+
+  .menu-left,
+  .menu-right {
+    gap: 5px;
+  }
+
+  .menu-divider {
+    margin: 0 2px;
+  }
+}
+</style>

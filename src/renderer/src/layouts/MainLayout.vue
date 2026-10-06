@@ -62,30 +62,35 @@ const settingsStore = useSettingsStore()
   flex: 1 1 auto;
   overflow: auto;
 }
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
-<!-- 临时整理：第 2-10 项 -->
-<!-- 临时整理：第 2-11 项 -->
-<!-- 临时整理：第 2-12 项 -->
-<!-- 临时整理：第 2-13 项 -->
-<!-- 临时整理：第 2-14 项 -->
-<!-- 临时整理：第 2-15 项 -->
-<!-- 临时整理：第 2-16 项 -->
-<!-- 临时整理：第 2-17 项 -->
-<!-- 临时整理：第 2-18 项 -->
-<!-- 临时整理：第 2-19 项 -->
-<!-- 临时整理：第 2-20 项 -->
-<!-- 临时整理：第 2-21 项 -->
-<!-- 临时整理：第 2-22 项 -->
-<!-- 临时整理：第 2-23 项 -->
-<!-- 临时整理：第 2-24 项 -->
-<!-- 临时整理：第 2-25 项 -->
-<!-- 临时整理：第 2-26 项 -->
-<!-- 临时整理：第 2-27 项 -->
+
+.log-panel-host {
+  min-height: 0;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.hidden-log-placeholder {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 0;
+  background: var(--app-statusbar-bg);
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+}
+
+.hidden-log-placeholder:hover {
+  background: var(--app-hover-bg);
+}
+
+.hidden-log-count {
+  margin-left: auto;
+  color: var(--el-text-color-secondary);
+}
+</style>
