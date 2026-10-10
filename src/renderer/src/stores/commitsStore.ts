@@ -101,21 +101,59 @@ export const useCommitsStore = defineStore('commits', () => {
         return false
       }
 
-// 临时整理：第 3-1 项
-const __draft2_1 = 1
-// 临时整理：第 3-3 项
-const __draft2_3 = 3
-// 临时整理：第 3-5 项
-const __draft2_5 = 5
-// 临时整理：第 3-7 项
-const __draft2_7 = 7
-// 临时整理：第 3-9 项
-const __draft2_9 = 9
-// 临时整理：第 3-11 项
-const __draft2_11 = 11
-// 临时整理：第 3-13 项
-const __draft2_13 = 13
-// 临时整理：第 3-15 项
-const __draft2_15 = 15
-// 临时整理：第 3-17 项
-const __draft2_17 = 17
+      commitMessage.value = ''
+      await filesStore.refreshStatus(false)
+      filesStore.clearDiff()
+      return true
+    } catch (commitError) {
+      setError(`提交失败：${getErrorMessage(commitError)}`)
+      return false
+    } finally {
+      committing.value = false
+    }
+  }
+
+  async function commitAndPush(): Promise<boolean> {
+    const committed = await commitStaged()
+    if (!committed) {
+      return false
+    }
+
+    const cwd = projectStore.cwd.trim()
+    pushing.value = true
+
+    try {
+      const result = await window.api.multiPushPushAll(cwd, {
+        branch: projectStore.branch || undefined
+      })
+      if (!result.success) {
+        setError(
+          `提交已完成，但推送失败：成功 ${result.successCount}，失败 ${result.failed}，跳过 ${result.skipped}。`
+        )
+        return false
+      }
+
+      await filesStore.refreshStatus(false)
+      return true
+    } catch (pushError) {
+      setError(`提交已完成，但推送失败：${getErrorMessage(pushError)}`)
+      return false
+    } finally {
+      pushing.value = false
+    }
+  }
+
+  return {
+    commitMessage,
+    committing,
+    pushing,
+    error,
+    hasMessage,
+    canCommit,
+    commitTooltip,
+    clearError,
+    reset,
+    commitStaged,
+    commitAndPush
+  }
+})

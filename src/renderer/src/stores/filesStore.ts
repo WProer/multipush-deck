@@ -292,13 +292,152 @@ export const useFilesStore = defineStore('files', () => {
       (cwd) => window.api.gitUnstage(cwd, paths)
     )
 
-// 临时整理：第 4-1 项
-const __draft3_1 = 1
-// 临时整理：第 4-3 项
-const __draft3_3 = 3
-// 临时整理：第 4-5 项
-const __draft3_5 = 5
-// 临时整理：第 4-7 项
-const __draft3_7 = 7
-// 临时整理：第 4-9 项
-const __draft3_9 = 9
+    if (success) {
+      clearStagedSelection()
+      await refreshStatus(false)
+    }
+
+    return success
+  }
+
+  async function stageFile(file: GitFileStatusItem): Promise<boolean> {
+    const paths = getOperationPaths(unstagedFiles.value, [file.path])
+    if (!paths.length) {
+      return false
+    }
+
+    const success = await runFileOperation(
+      'stage',
+      `$ git add -- ${file.path}`,
+      (cwd) => window.api.gitStage(cwd, paths)
+    )
+
+    if (success) {
+      toggleUnstagedSelection(file.path, false)
+      await refreshStatus(false)
+    }
+
+    return success
+  }
+
+  async function unstageFile(file: GitFileStatusItem): Promise<boolean> {
+    const paths = getOperationPaths(stagedFiles.value, [file.path])
+    if (!paths.length) {
+      return false
+    }
+
+    const success = await runFileOperation(
+      'unstage',
+      `$ git reset HEAD -- ${file.path}`,
+      (cwd) => window.api.gitUnstage(cwd, paths)
+    )
+
+    if (success) {
+      toggleStagedSelection(file.path, false)
+      await refreshStatus(false)
+    }
+
+    return success
+  }
+
+  async function discardFile(file: GitFileStatusItem): Promise<boolean> {
+    const success = await runFileOperation(
+      'discard',
+      `$ git checkout -- ${file.path}`,
+      (cwd) => window.api.gitDiscard(cwd, file.path)
+    )
+
+    if (success) {
+      toggleUnstagedSelection(file.path, false)
+      await refreshStatus(false)
+      if (currentFile.value?.path === file.path) {
+        clearDiff()
+      }
+    }
+
+    return success
+  }
+
+  async function loadDiff(
+    file: GitFileStatusItem,
+    staged: boolean
+  ): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    if (!cwd) {
+      currentDiff.value = {
+        success: false,
+        diff: '',
+        error: '请先选择项目目录。'
+      }
+      return
+    }
+
+    currentFile.value = file
+    currentDiffStaged.value = staged
+    diffLoading.value = true
+    currentDiff.value = null
+
+    try {
+      currentDiff.value = await window.api.gitDiff(cwd, file.path, staged)
+    } catch (diffError) {
+      currentDiff.value = {
+        success: false,
+        diff: '',
+        error: `读取文件差异失败：${getErrorMessage(diffError)}`
+      }
+    } finally {
+      diffLoading.value = false
+    }
+  }
+
+  function clearDiff(): void {
+    currentDiff.value = null
+    currentFile.value = null
+    currentDiffStaged.value = false
+    diffLoading.value = false
+  }
+
+  return {
+    status,
+    files,
+    stagedFiles,
+    unstagedFiles,
+    selectedStaged,
+    selectedUnstaged,
+    stagedCount,
+    unstagedCount,
+    loading,
+    operation,
+    error,
+    currentDiff,
+    currentFile,
+    currentDiffStaged,
+    diffLoading,
+    hasStagedFiles,
+    hasUnstagedFiles,
+    hasFileStatus,
+    hasSelectedStagedFiles,
+    hasSelectedUnstagedFiles,
+    hasDirectory,
+    isBusy,
+    setCounts,
+    clear,
+    setStagedSelection,
+    setUnstagedSelection,
+    toggleStagedSelection,
+    toggleUnstagedSelection,
+    clearSelections,
+    clearStagedSelection,
+    clearUnstagedSelection,
+    isStagedSelected,
+    isUnstagedSelected,
+    refreshStatus,
+    stageSelected,
+    unstageSelected,
+    stageFile,
+    unstageFile,
+    discardFile,
+    loadDiff,
+    clearDiff
+  }
+})

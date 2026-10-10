@@ -202,18 +202,124 @@ export const useCommitLogStore = defineStore('commit-log', () => {
       hasMore.value = result.length === PAGE_SIZE
       pushStatus.value = new Map()
 
-// 临时整理：第 4-1 项
-const __draft3_1 = 1
-// 临时整理：第 4-3 项
-const __draft3_3 = 3
-// 临时整理：第 4-5 项
-const __draft3_5 = 5
-// 临时整理：第 4-7 项
-const __draft3_7 = 7
-// 临时整理：第 4-9 项
-const __draft3_9 = 9
-// 临时整理：第 4-11 项
-const __draft3_11 = 11
-// 临时整理：第 4-13 项
-const __draft3_13 = 13
-// 临时整理：第 4-15 项
+      const firstCommit = result[0] ?? null
+      selectedCommit.value = firstCommit
+      if (firstCommit) {
+        await Promise.all([
+          loadCommitDetail(firstCommit),
+          loadPushStatus(result, effectiveBranch, requestId)
+        ])
+      }
+    } catch (logError) {
+      if (requestId === logRequestId) {
+        commits.value = []
+        selectedCommit.value = null
+        setError(`读取提交日志失败：${getErrorMessage(logError)}`)
+      }
+    } finally {
+      if (requestId === logRequestId) {
+        loading.value = false
+      }
+    }
+  }
+
+  async function refresh(): Promise<void> {
+    await loadLog(currentBranch.value)
+  }
+
+  async function selectCommit(commit: CommitLogEntry): Promise<void> {
+    selectedCommit.value = commit
+    await Promise.all([
+      loadCommitDetail(commit),
+      pushStatus.value.has(commit.hash)
+        ? Promise.resolve()
+        : loadPushStatus([commit], currentBranch.value || 'HEAD')
+    ])
+  }
+
+  async function loadMore(): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    if (
+      !cwd ||
+      loading.value ||
+      loadingMore.value ||
+      !hasMore.value
+    ) {
+      return
+    }
+
+    loadingMore.value = true
+    try {
+      const branch = currentBranch.value || 'HEAD'
+      const result = await window.api.getCommitLog(cwd, {
+        branch,
+        limit: PAGE_SIZE,
+        skip: commits.value.length
+      })
+      const existing = new Set(commits.value.map((commit) => commit.hash))
+      const additions = result.filter((commit) => !existing.has(commit.hash))
+
+      commits.value = [...commits.value, ...additions]
+      hasMore.value = result.length === PAGE_SIZE
+      await loadPushStatus(additions, branch)
+    } catch (loadMoreError) {
+      setError(`加载更多提交失败：${getErrorMessage(loadMoreError)}`)
+    } finally {
+      loadingMore.value = false
+    }
+  }
+
+  async function selectFile(file: CommitFileChange): Promise<void> {
+    const cwd = projectStore.cwd.trim()
+    const commit = selectedCommit.value
+    if (!cwd || !commit) {
+      return
+    }
+
+    selectedFile.value = file
+    selectedFileDiff.value = null
+    diffLoading.value = true
+
+    try {
+      selectedFileDiff.value = await window.api.getCommitFileDiff(
+        cwd,
+        commit.hash,
+        file.path
+      )
+    } catch (diffError) {
+      selectedFileDiff.value = {
+        success: false,
+        diff: '',
+        error: `读取文件差异失败：${getErrorMessage(diffError)}`
+      }
+    } finally {
+      diffLoading.value = false
+    }
+  }
+
+  return {
+    commits,
+    selectedCommit,
+    pushStatus,
+    currentBranch,
+    branches,
+    loading,
+    loadingMore,
+    detailLoading,
+    diffLoading,
+    error,
+    hasMore,
+    selectedCommitDetail,
+    selectedFile,
+    selectedFileDiff,
+    hasDirectory,
+    selectedPushStatus,
+    remoteCount,
+    clear,
+    loadLog,
+    refresh,
+    selectCommit,
+    loadMore,
+    selectFile
+  }
+})

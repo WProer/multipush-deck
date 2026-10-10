@@ -102,10 +102,67 @@ const pushTooltip = computed(() => {
   min-height: 0;
   overflow: hidden;
 }
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
+
+.commit-content {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  overflow: auto;
+}
+
+.commit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field-label {
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.field-count {
+  color: var(--text-muted);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 10px;
+}
+
+.commit-input :deep(.el-textarea__inner) {
+  height: 80px;
+  min-height: 80px !important;
+  resize: none;
+}
+
+.commit-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.commit-actions :deep(.el-button) {
+  width: 100%;
+  min-height: 36px;
+  margin: 0;
+}
+
+.tooltip-target {
+  display: block;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .commit-content {
+    padding: 10px;
+  }
+}
+</style>

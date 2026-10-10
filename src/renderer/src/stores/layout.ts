@@ -72,34 +72,39 @@ export const useLayoutStore = defineStore('layout', () => {
     )
   )
 
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
-const __draft1_15 = 15
-// 临时整理：第 2-17 项
-const __draft1_17 = 17
-// 临时整理：第 2-19 项
-const __draft1_19 = 19
-// 临时整理：第 2-21 项
-const __draft1_21 = 21
-// 临时整理：第 2-23 项
-const __draft1_23 = 23
-// 临时整理：第 2-25 项
-const __draft1_25 = 25
-// 临时整理：第 2-27 项
-const __draft1_27 = 27
-// 临时整理：第 2-29 项
-const __draft1_29 = 29
-// 临时整理：第 2-31 项
+  function setMainSplitSize(value: number): void {
+    if (!Number.isFinite(value)) {
+      return
+    }
+
+    mainSplitSize.value = clamp(value, MAIN_SPLIT_MIN, MAIN_SPLIT_MAX)
+    persistSize(MAIN_SPLIT_STORAGE_KEY, mainSplitSize.value)
+  }
+
+  function setLeftTopSize(value: number): void {
+    if (!Number.isFinite(value)) {
+      return
+    }
+
+    leftTopSize.value = clamp(value, LEFT_VERTICAL_MIN, LEFT_VERTICAL_MAX)
+    persistSize(LEFT_VERTICAL_STORAGE_KEY, leftTopSize.value)
+  }
+
+  function setRightTopSize(value: number): void {
+    if (!Number.isFinite(value)) {
+      return
+    }
+
+    rightTopSize.value = clamp(value, RIGHT_VERTICAL_MIN, RIGHT_VERTICAL_MAX)
+    persistSize(RIGHT_VERTICAL_STORAGE_KEY, rightTopSize.value)
+  }
+
+  return {
+    mainSplitSize,
+    leftTopSize,
+    rightTopSize,
+    setMainSplitSize,
+    setLeftTopSize,
+    setRightTopSize
+  }
+})
