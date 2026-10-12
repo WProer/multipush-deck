@@ -232,107 +232,147 @@ export const useLogsStore = defineStore('logs', () => {
     }
 
     const entry = findEntry(id)
-// 临时整理：第 4-1 项
-const __draft3_1 = 1
-// 临时整理：第 4-3 项
-const __draft3_3 = 3
-// 临时整理：第 4-5 项
-const __draft3_5 = 5
-// 临时整理：第 4-7 项
-const __draft3_7 = 7
-// 临时整理：第 4-9 项
-const __draft3_9 = 9
-// 临时整理：第 4-11 项
-const __draft3_11 = 11
-// 临时整理：第 4-13 项
-const __draft3_13 = 13
-// 临时整理：第 4-15 项
-const __draft3_15 = 15
-// 临时整理：第 4-17 项
-const __draft3_17 = 17
-// 临时整理：第 4-19 项
-const __draft3_19 = 19
-// 临时整理：第 4-21 项
-const __draft3_21 = 21
-// 临时整理：第 4-23 项
-const __draft3_23 = 23
-// 临时整理：第 4-25 项
-const __draft3_25 = 25
-// 临时整理：第 4-27 项
-const __draft3_27 = 27
-// 临时整理：第 4-29 项
-const __draft3_29 = 29
-// 临时整理：第 4-31 项
-const __draft3_31 = 31
-// 临时整理：第 4-33 项
-const __draft3_33 = 33
-// 临时整理：第 4-35 项
-const __draft3_35 = 35
-// 临时整理：第 4-37 项
-const __draft3_37 = 37
-// 临时整理：第 4-39 项
-const __draft3_39 = 39
-// 临时整理：第 4-41 项
-const __draft3_41 = 41
-// 临时整理：第 4-43 项
-const __draft3_43 = 43
-// 临时整理：第 4-45 项
-const __draft3_45 = 45
-// 临时整理：第 4-47 项
-const __draft3_47 = 47
-// 临时整理：第 4-49 项
-const __draft3_49 = 49
-// 临时整理：第 4-51 项
-const __draft3_51 = 51
-// 临时整理：第 4-53 项
-const __draft3_53 = 53
-// 临时整理：第 4-55 项
-const __draft3_55 = 55
-// 临时整理：第 4-57 项
-const __draft3_57 = 57
-// 临时整理：第 4-59 项
-const __draft3_59 = 59
-// 临时整理：第 4-61 项
-const __draft3_61 = 61
-// 临时整理：第 4-63 项
-const __draft3_63 = 63
-// 临时整理：第 4-65 项
-const __draft3_65 = 65
-// 临时整理：第 4-67 项
-const __draft3_67 = 67
-// 临时整理：第 4-69 项
-const __draft3_69 = 69
-// 临时整理：第 4-71 项
-const __draft3_71 = 71
-// 临时整理：第 4-73 项
-const __draft3_73 = 73
-// 临时整理：第 4-75 项
-const __draft3_75 = 75
-// 临时整理：第 4-77 项
-const __draft3_77 = 77
-// 临时整理：第 4-79 项
-const __draft3_79 = 79
-// 临时整理：第 4-81 项
-const __draft3_81 = 81
-// 临时整理：第 4-83 项
-const __draft3_83 = 83
-// 临时整理：第 4-85 项
-const __draft3_85 = 85
-// 临时整理：第 4-87 项
-const __draft3_87 = 87
-// 临时整理：第 4-89 项
-const __draft3_89 = 89
-// 临时整理：第 4-91 项
-const __draft3_91 = 91
-// 临时整理：第 4-93 项
-const __draft3_93 = 93
-// 临时整理：第 4-95 项
-const __draft3_95 = 95
-// 临时整理：第 4-97 项
-const __draft3_97 = 97
-// 临时整理：第 4-99 项
-const __draft3_99 = 99
-// 临时整理：第 4-101 项
-const __draft3_101 = 101
-// 临时整理：第 4-103 项
-const __draft3_103 = 103
+    if (entry) {
+      entry.stderr += chunk
+      entry.rawStderr += chunk
+    }
+  }
+
+  function endCommand(
+    id: string,
+    exitCode: number,
+    duration: number,
+    summary?: string,
+    details: LogEntry['details'] = [],
+    rawStderr?: string
+  ): void {
+    if (paused.value) {
+      return
+    }
+
+    const entry = findEntry(id)
+    if (!entry) {
+      return
+    }
+
+    entry.exitCode = exitCode
+    entry.duration = duration
+    entry.details = [...details]
+    if (rawStderr !== undefined) {
+      entry.rawStderr = rawStderr
+    }
+    entry.status = exitCode === 0 ? 'success' : 'failed'
+    entry.collapsed = exitCode === 0
+    entry.summary =
+      summary?.trim() ||
+      (exitCode === 0 ? '执行完成' : `执行失败，退出码 ${exitCode}`)
+  }
+
+  function append(entry: LogEntry | LegacyLogEntry): void {
+    if (paused.value) {
+      return
+    }
+
+    entries.value.push(isLegacyEntry(entry) ? fromLegacyEntry(entry) : entry)
+    trimEntries()
+  }
+
+  function clear(): void {
+    entries.value = []
+  }
+
+  function toggleCollapse(id: string): void {
+    const entry = findEntry(id)
+    if (entry) {
+      entry.collapsed = !entry.collapsed
+    }
+  }
+
+  function setAllCollapsed(value: boolean): void {
+    for (const entry of entries.value) {
+      entry.collapsed = value
+    }
+  }
+
+  function toggleVisible(): void {
+    visible.value = !visible.value
+    if (visible.value) {
+      collapsed.value = false
+    }
+
+    persistBoolean(VISIBLE_STORAGE_KEY, visible.value)
+  }
+
+  function toggleCollapsed(): void {
+    if (!visible.value) {
+      visible.value = true
+      collapsed.value = false
+    } else {
+      collapsed.value = !collapsed.value
+    }
+
+    persistBoolean(VISIBLE_STORAGE_KEY, visible.value)
+  }
+
+  function setHeight(value: number): void {
+    height.value = normalizeHeight(value)
+    if (heightPersistTimer !== null) {
+      clearTimeout(heightPersistTimer)
+    }
+    heightPersistTimer = setTimeout(() => {
+      heightPersistTimer = null
+      writePersistedHeight(height.value)
+    }, HEIGHT_PERSIST_DELAY)
+  }
+
+  function persistHeight(): void {
+    if (heightPersistTimer !== null) {
+      clearTimeout(heightPersistTimer)
+      heightPersistTimer = null
+    }
+    writePersistedHeight(height.value)
+  }
+
+  function setCollapsed(value: boolean): void {
+    visible.value = true
+    collapsed.value = value
+    persistBoolean(VISIBLE_STORAGE_KEY, visible.value)
+  }
+
+  function setPanelState(state: 'hidden' | 'collapsed' | 'expanded'): void {
+    visible.value = state !== 'hidden'
+    collapsed.value = state === 'collapsed'
+    persistBoolean(VISIBLE_STORAGE_KEY, visible.value)
+  }
+
+  function togglePaused(): void {
+    paused.value = !paused.value
+  }
+
+  return {
+    entries,
+    filteredEntries,
+    lastEntry,
+    visible,
+    collapsed,
+    height,
+    paused,
+    onlyFailed,
+    searchQuery,
+    startCommand,
+    appendStdout,
+    appendStderr,
+    endCommand,
+    append,
+    clear,
+    toggleCollapse,
+    setAllCollapsed,
+    toggleVisible,
+    toggleCollapsed,
+    setHeight,
+    persistHeight,
+    setCollapsed,
+    setPanelState,
+    togglePaused
+  }
+})

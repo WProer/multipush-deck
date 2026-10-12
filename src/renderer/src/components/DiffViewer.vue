@@ -183,88 +183,108 @@ const renderResult = computed<DiffRenderResult>(() => {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
-<!-- 临时整理：第 2-10 项 -->
-<!-- 临时整理：第 2-11 项 -->
-<!-- 临时整理：第 2-12 项 -->
-<!-- 临时整理：第 2-13 项 -->
-<!-- 临时整理：第 2-14 项 -->
-<!-- 临时整理：第 2-15 项 -->
-<!-- 临时整理：第 2-16 项 -->
-<!-- 临时整理：第 2-17 项 -->
-<!-- 临时整理：第 2-18 项 -->
-<!-- 临时整理：第 2-19 项 -->
-<!-- 临时整理：第 2-20 项 -->
-<!-- 临时整理：第 2-21 项 -->
-<!-- 临时整理：第 2-22 项 -->
-<!-- 临时整理：第 2-23 项 -->
-<!-- 临时整理：第 2-24 项 -->
-<!-- 临时整理：第 2-25 项 -->
-<!-- 临时整理：第 2-26 项 -->
-<!-- 临时整理：第 2-27 项 -->
-<!-- 临时整理：第 2-28 项 -->
-<!-- 临时整理：第 2-29 项 -->
-<!-- 临时整理：第 2-30 项 -->
-<!-- 临时整理：第 2-31 项 -->
-<!-- 临时整理：第 2-32 项 -->
-<!-- 临时整理：第 2-33 项 -->
-<!-- 临时整理：第 2-34 项 -->
-<!-- 临时整理：第 2-35 项 -->
-<!-- 临时整理：第 2-36 项 -->
-<!-- 临时整理：第 2-37 项 -->
-<!-- 临时整理：第 2-38 项 -->
-<!-- 临时整理：第 2-39 项 -->
-<!-- 临时整理：第 2-40 项 -->
-<!-- 临时整理：第 2-41 项 -->
-<!-- 临时整理：第 2-42 项 -->
-<!-- 临时整理：第 2-43 项 -->
-<!-- 临时整理：第 2-44 项 -->
-<!-- 临时整理：第 2-45 项 -->
-<!-- 临时整理：第 2-46 项 -->
-<!-- 临时整理：第 2-47 项 -->
-<!-- 临时整理：第 2-48 项 -->
-<!-- 临时整理：第 2-49 项 -->
-<!-- 临时整理：第 2-50 项 -->
-<!-- 临时整理：第 2-51 项 -->
-<!-- 临时整理：第 2-52 项 -->
-<!-- 临时整理：第 2-53 项 -->
-<!-- 临时整理：第 2-54 项 -->
-<!-- 临时整理：第 2-55 项 -->
-<!-- 临时整理：第 2-56 项 -->
-<!-- 临时整理：第 2-57 项 -->
-<!-- 临时整理：第 2-58 项 -->
-<!-- 临时整理：第 2-59 项 -->
-<!-- 临时整理：第 2-60 项 -->
-<!-- 临时整理：第 2-61 项 -->
-<!-- 临时整理：第 2-62 项 -->
-<!-- 临时整理：第 2-63 项 -->
-<!-- 临时整理：第 2-64 项 -->
-<!-- 临时整理：第 2-65 项 -->
-<!-- 临时整理：第 2-66 项 -->
-<!-- 临时整理：第 2-67 项 -->
-<!-- 临时整理：第 2-68 项 -->
-<!-- 临时整理：第 2-69 项 -->
-<!-- 临时整理：第 2-70 项 -->
-<!-- 临时整理：第 2-71 项 -->
-<!-- 临时整理：第 2-72 项 -->
-<!-- 临时整理：第 2-73 项 -->
-<!-- 临时整理：第 2-74 项 -->
-<!-- 临时整理：第 2-75 项 -->
-<!-- 临时整理：第 2-76 项 -->
-<!-- 临时整理：第 2-77 项 -->
-<!-- 临时整理：第 2-78 项 -->
-<!-- 临时整理：第 2-79 项 -->
-<!-- 临时整理：第 2-80 项 -->
-<!-- 临时整理：第 2-81 项 -->
-<!-- 临时整理：第 2-82 项 -->
-<!-- 临时整理：第 2-83 项 -->
-<!-- 临时整理：第 2-84 项 -->
-<!-- 临时整理：第 2-85 项 -->
+
+.diff-content {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  background: var(--el-bg-color);
+}
+
+.diff-state {
+  display: grid;
+  height: 100%;
+  min-height: 180px;
+  place-content: center;
+  justify-items: center;
+  gap: 9px;
+  padding: 24px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.diff-state p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.state-icon {
+  color: var(--el-text-color-placeholder);
+  font-size: 22px;
+}
+
+.loading-icon {
+  color: var(--el-color-primary);
+  font-size: 22px;
+}
+
+.diff-alert {
+  margin: 12px;
+  width: auto;
+}
+
+.diff-html {
+  min-width: 680px;
+  padding: 0 0 12px;
+}
+
+.diff-html :deep(.d2h-wrapper) {
+  color: var(--el-text-color-regular);
+  font-size: 11px;
+}
+
+.diff-html :deep(.d2h-file-header) {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 36px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  background: var(--el-fill-color-light);
+}
+
+.diff-html :deep(.d2h-file-name) {
+  color: var(--el-text-color-primary);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.diff-html :deep(.d2h-code-line),
+.diff-html :deep(.d2h-code-side-line) {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.diff-html :deep(.d2h-code-linenumber),
+.diff-html :deep(.d2h-code-side-linenumber) {
+  border-right: 1px solid var(--el-border-color-lighter);
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 10px;
+}
+
+.diff-html :deep(.d2h-del) {
+  background: var(--el-color-danger-light-9);
+}
+
+.diff-html :deep(.d2h-ins) {
+  background: var(--el-color-success-light-9);
+}
+
+.diff-html :deep(.d2h-info) {
+  background: var(--el-fill-color-light);
+}
+
+@media (max-width: 900px) {
+  .diff-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .diff-file-summary {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+</style>

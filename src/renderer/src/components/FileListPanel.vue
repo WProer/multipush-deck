@@ -435,12 +435,241 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
+    <div
+      v-if="contextMenu.visible"
+      class="file-context-menu"
+      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
+      role="menu"
+      @click.stop
+    >
+      <template v-if="isStaged">
+        <button type="button" @click="handleContextCommand('action')">
+          取消暂存
+        </button>
+        <button type="button" @click="handleContextCommand('diff')">
+          查看差异
+        </button>
+      </template>
+      <template v-else>
+        <button type="button" @click="handleContextCommand('action')">
+          暂存
+        </button>
+        <button type="button" @click="handleContextCommand('diff')">
+          查看差异
+        </button>
+        <button
+          type="button"
+          class="danger"
+          @click="handleContextCommand('discard')"
+        >
+          丢弃更改
+        </button>
+      </template>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.file-side-panel {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.file-panel-header {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px 10px 8px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--app-card-bg);
+}
+
+.panel-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.panel-title {
+  overflow: hidden;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-toolbar {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.panel-toolbar :deep(.el-divider--vertical) {
+  height: 18px;
+  margin: 0 1px;
+}
+
+.tooltip-target {
+  display: inline-flex;
+}
+
+.file-list-content {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 7px 8px 9px;
+}
+
+.state-block {
+  padding: 12px;
+}
+
+.empty-state {
+  display: grid;
+  min-height: 130px;
+  place-content: center;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.panel-alert {
+  margin: 2px;
+}
+
+.file-list {
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+}
+
+.file-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-soft);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.file-row:last-child {
+  border-bottom: 0;
+}
+
+.file-row:hover {
+  background: var(--app-hover-bg);
+}
+
+.file-row.is-current {
+  background: var(--app-active-bg);
+  box-shadow: inset 3px 0 0 var(--el-color-primary);
+}
+
+.checkbox-target {
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-icon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--el-fill-color);
+  color: var(--el-text-color-secondary);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-success {
+  background: var(--el-color-success-light-9);
+  color: var(--el-color-success);
+}
+
+.status-warning {
+  background: var(--el-color-warning-light-9);
+  color: var(--el-color-warning);
+}
+
+.status-danger {
+  background: var(--el-color-danger-light-9);
+  color: var(--el-color-danger);
+}
+
+.status-primary {
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+}
+
+.status-info {
+  background: var(--el-fill-color);
+  color: var(--el-text-color-secondary);
+}
+
+.file-path {
+  overflow: hidden;
+  color: var(--text-main);
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-context-menu {
+  position: fixed;
+  z-index: 3000;
+  display: grid;
+  width: 168px;
+  padding: 5px;
+  border: 1px solid var(--app-card-border);
+  border-radius: 6px;
+  background: var(--app-card-bg);
+  box-shadow: var(--el-box-shadow-light);
+}
+
+.file-context-menu button {
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.file-context-menu button:hover {
+  background: var(--app-hover-bg);
+  color: var(--el-color-primary);
+}
+
+.file-context-menu button.danger {
+  color: var(--el-color-danger);
+}
+
+.file-context-menu button.danger:hover {
+  background: var(--el-color-danger-light-9);
+}
+
+</style>

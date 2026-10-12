@@ -68,28 +68,39 @@ const unstagedLabel = computed(() =>
   gap: 6px;
   white-space: nowrap;
 }
-<!-- 临时整理：第 2-1 项 -->
-<!-- 临时整理：第 2-2 项 -->
-<!-- 临时整理：第 2-3 项 -->
-<!-- 临时整理：第 2-4 项 -->
-<!-- 临时整理：第 2-5 项 -->
-<!-- 临时整理：第 2-6 项 -->
-<!-- 临时整理：第 2-7 项 -->
-<!-- 临时整理：第 2-8 项 -->
-<!-- 临时整理：第 2-9 项 -->
-<!-- 临时整理：第 2-10 项 -->
-<!-- 临时整理：第 2-11 项 -->
-<!-- 临时整理：第 2-12 项 -->
-<!-- 临时整理：第 2-13 项 -->
-<!-- 临时整理：第 2-14 项 -->
-<!-- 临时整理：第 2-15 项 -->
-<!-- 临时整理：第 2-16 项 -->
-<!-- 临时整理：第 2-17 项 -->
-<!-- 临时整理：第 2-18 项 -->
-<!-- 临时整理：第 2-19 项 -->
-<!-- 临时整理：第 2-20 项 -->
-<!-- 临时整理：第 2-21 项 -->
-<!-- 临时整理：第 2-22 项 -->
-<!-- 临时整理：第 2-23 项 -->
-<!-- 临时整理：第 2-24 项 -->
-<!-- 临时整理：第 2-25 项 -->
+
+.directory-item {
+  flex: 1 1 auto;
+}
+
+.directory-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-label {
+  flex: 0 0 auto;
+  color: var(--el-text-color-secondary);
+}
+
+.status-value {
+  min-width: 0;
+  color: var(--el-text-color-primary);
+  font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.file-counts {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 760px) {
+  .global-status-bar {
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .status-label {
+    display: none;
+  }
+}
+</style>

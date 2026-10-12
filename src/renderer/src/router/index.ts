@@ -52,26 +52,29 @@ const routes: RouteRecordRaw[] = [
         component: SettingsPage
       },
       {
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
-// 临时整理：第 2-3 项
-const __draft1_3 = 3
-// 临时整理：第 2-5 项
-const __draft1_5 = 5
-// 临时整理：第 2-7 项
-const __draft1_7 = 7
-// 临时整理：第 2-9 项
-const __draft1_9 = 9
-// 临时整理：第 2-11 项
-const __draft1_11 = 11
-// 临时整理：第 2-13 项
-const __draft1_13 = 13
-// 临时整理：第 2-15 项
-const __draft1_15 = 15
-// 临时整理：第 2-17 项
-const __draft1_17 = 17
-// 临时整理：第 2-19 项
-const __draft1_19 = 19
-// 临时整理：第 2-21 项
-const __draft1_21 = 21
-// 临时整理：第 2-23 项
+        path: 'help',
+        name: 'help',
+        meta: { title: '帮助' },
+        component: HelpPage
+      },
+      {
+        path: 'about',
+        name: 'about',
+        meta: { title: '关于' },
+        component: AboutPage
+      }
+    ]
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/repos'
+  }
+]
+
+export const router = createRouter({
+  history: createWebHashHistory(),
+  routes,
+  scrollBehavior: () => ({ top: 0 })
+})
+
+export default router
