@@ -11,7 +11,7 @@ MultiPush Deck 是一款跨平台的桌面客户端，用于把同一份代码�
 
 核心理念是“一份代码，多端同步”。所有 Git 操作都基于系统已安装的 Git，通过子进程执行，应用本身不引入额外的 Git 运行时。
 
-当前版本：v1.0.0。
+当前版本：v1.0.1。
 
 ## 下载安装
 
@@ -19,11 +19,11 @@ MultiPush Deck 是一款跨平台的桌面客户端，用于把同一份代码�
 
 前往 Releases 页面下载最新版安装包：
 
-[下载 MultiPush Deck v1.0.0](https://github.com/WProer/multipush-deck/releases/latest)
+[下载 MultiPush Deck v1.0.1](https://github.com/WProer/multipush-deck/releases/latest)
 
 | 平台 | 安装包 |
 | --- | --- |
-| Windows | MultiPush Deck-1.0.0-Setup.exe |
+| Windows | MultiPush Deck-1.0.1-Setup.exe |
 | macOS | 暂未提供 |
 | Linux | 暂未提供 |
 
