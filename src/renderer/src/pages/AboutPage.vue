@@ -19,6 +19,9 @@ import {
 import type { AppInfo, RuntimeInfo } from '../../../shared/types'
 import { useProjectStore } from '../stores/projectStore'
 
+const LICENSE_URL =
+  'https://github.com/WProer/multipush-deck/blob/master/LICENSE'
+
 interface FeatureItem {
   title: string
   description: string
@@ -83,7 +86,9 @@ const dependencyRows = computed(() => {
   ]
 })
 
-const license = computed(() => appInfo.value?.license ?? 'MIT')
+const license = computed(
+  () => appInfo.value?.license ?? 'PolyForm Noncommercial 1.0.0'
+)
 
 function formatTime(value: string): string {
   if (!value) {
@@ -124,6 +129,16 @@ async function openRepository(): Promise<void> {
   } catch (error) {
     ElMessage.error(
       error instanceof Error ? error.message : '打开项目地址失败'
+    )
+  }
+}
+
+async function openLicense(): Promise<void> {
+  try {
+    await window.api.openExternal(LICENSE_URL)
+  } catch (error) {
+    ElMessage.error(
+      error instanceof Error ? error.message : '打开许可证失败'
     )
   }
 }
@@ -324,7 +339,16 @@ onMounted(() => {
             </div>
             <div class="info-line">
               <dt>许可协议</dt>
-              <dd>{{ license }}</dd>
+              <dd class="license-cell">
+                <span :title="license">{{ license }}</span>
+                <button
+                  class="external-link license-link"
+                  type="button"
+                  @click="openLicense"
+                >
+                  查看
+                </button>
+              </dd>
             </div>
             <div class="info-line">
               <dt>构建时间</dt>
@@ -590,6 +614,23 @@ html.dark .feature-list li {
 
 .external-link:hover {
   text-decoration: underline;
+}
+
+.license-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.license-cell > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.license-link {
+  flex: 0 0 auto;
 }
 
 .dep-table {

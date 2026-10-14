@@ -6,3 +6,4 @@ dist/
 .git.backup-*
 .git-remotes.txt
 scripts/
+dist/

@@ -12,13 +12,20 @@ import {
   Guide,
   InfoFilled,
   Monitor,
-  Picture,
   Promotion,
   Refresh,
   Setting,
   Upload
 } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
+import step1SelectDirectory from '../assets/help/help-step-1-select-directory.png'
+import step2AddRepository from '../assets/help/help-step-2-add-repository.png'
+import step3InitConfig from '../assets/help/help-step-3-init-config.png'
+import step4SetupRemotes from '../assets/help/help-step-4-setup-remotes.png'
+import step5DailyUse from '../assets/help/help-step-5-daily-use.png'
+import pageCommitLog from '../assets/help/help-page-commit-log.png'
+import pagePushCenter from '../assets/help/help-page-push-center.png'
+import pageSettings from '../assets/help/help-page-settings.png'
 
 type HelpTab = 'guide' | 'intro'
 
@@ -26,6 +33,8 @@ interface QuickStartStep {
   title: string
   description: string
   icon: Component
+  image: string
+  alt: string
 }
 
 interface CapabilityItem {
@@ -43,31 +52,41 @@ const quickStartSteps: QuickStartStep[] = [
     title: '选择项目目录',
     description:
       '在“仓库管理”页选择需要同步的本地 Git 仓库目录，应用会记住该路径并自动加载分支与文件状态。',
-    icon: FolderOpened
+    icon: FolderOpened,
+    image: step1SelectDirectory,
+    alt: '顶部菜单栏与项目目录，包含选择目录按钮、日志开关与配置状态指示'
   },
   {
     title: '添加远程仓库',
     description:
       '在“仓库管理”页添加 Gitee、GitHub、GitLab 或自建 Git 服务的仓库地址，并为每个仓库设置别名与启用状态。',
-    icon: Setting
+    icon: Setting,
+    image: step2AddRepository,
+    alt: '仓库管理页的仓库列表，包含别名、仓库 URL、本地状态与启用开关'
   },
   {
     title: '初始化配置',
     description:
       '点击“初始化配置”生成干净的 .git-remotes.txt 模板，文件里只包含注释说明，不包含任何示例仓库。',
-    icon: Document
+    icon: Document,
+    image: step3InitConfig,
+    alt: '首次设置面板中的初始化配置按钮与配置状态提示'
   },
   {
     title: 'Setup 远程',
     description:
       '点击“Setup 远程”把配置文件中的仓库写入本地 Git 远程，并自动对照配置文件与本地远程的差异。',
-    icon: Connection
+    icon: Connection,
+    image: step4SetupRemotes,
+    alt: '仓库管理页整体界面，包含首次设置面板与本地远程对照结果'
   },
   {
     title: '开始日常使用',
     description:
       '切换到“文件与提交”页查看未暂存文件，勾选、暂存、提交，完成后即可在“推送中心”一键推送到全部仓库。',
-    icon: Upload
+    icon: Upload,
+    image: step5DailyUse,
+    alt: '文件与提交页，包含未暂存文件、已暂存文件、提交面板与 Diff 查看器'
   }
 ]
 
@@ -80,12 +99,39 @@ const dailySteps: string[] = [
 ]
 
 const pageFunctions = [
-  { page: '仓库管理', description: '配置远程仓库、初始化、Setup、导入本地远程' },
-  { page: '文件与提交', description: '暂存、提交、查看 Diff' },
-  { page: '提交日志', description: '查看历史提交、推送状态' },
-  { page: '推送中心', description: '一键推送、查看同步状态、重新 Setup' },
-  { page: '设置', description: '默认目录、日志偏好、主题' }
+  {
+    page: '仓库管理',
+    description: '配置远程仓库、初始化、Setup、导入本地远程',
+    image: step4SetupRemotes,
+    alt: '仓库管理页面'
+  },
+  {
+    page: '文件与提交',
+    description: '暂存、提交、查看 Diff',
+    image: step5DailyUse,
+    alt: '文件与提交页面'
+  },
+  {
+    page: '提交日志',
+    description: '查看历史提交、推送状态',
+    image: pageCommitLog,
+    alt: '提交日志页面'
+  },
+  {
+    page: '推送中心',
+    description: '一键推送、查看同步状态、重新 Setup',
+    image: pagePushCenter,
+    alt: '推送中心页面'
+  },
+  {
+    page: '设置',
+    description: '默认目录、日志偏好、主题',
+    image: pageSettings,
+    alt: '设置页面'
+  }
 ]
+
+const pageShots = pageFunctions.map((item) => item.image)
 
 const faqItems = [
   {
@@ -211,14 +257,18 @@ function handleTabChange(name: string | number): void {
                     <h3>{{ step.title }}</h3>
                   </div>
                   <p>{{ step.description }}</p>
-                  <el-image class="step-shot" fit="cover">
-                    <template #error>
-                      <div class="image-placeholder">
-                        <el-icon><Picture /></el-icon>
-                        <span>界面截图占位</span>
-                      </div>
-                    </template>
-                  </el-image>
+                  <el-image
+                    class="help-screenshot"
+                    :src="step.image"
+                    :preview-src-list="[step.image]"
+                    :alt="step.alt"
+                    fit="contain"
+                    hide-on-click-modal
+                    preview-teleported
+                  />
+                  <p class="help-screenshot-caption">
+                    图 {{ index + 1 }}：{{ step.title }}
+                  </p>
                 </div>
               </li>
             </ol>
@@ -263,6 +313,28 @@ function handleTabChange(name: string | number): void {
               <el-table-column prop="page" label="页面" width="160" />
               <el-table-column prop="description" label="主要功能" />
             </el-table>
+
+            <div class="page-gallery">
+              <figure
+                v-for="(item, index) in pageFunctions"
+                :key="item.page"
+                class="page-gallery-item"
+              >
+                <el-image
+                  class="page-gallery-image"
+                  :src="item.image"
+                  :preview-src-list="pageShots"
+                  :initial-index="index"
+                  :alt="item.alt"
+                  fit="contain"
+                  hide-on-click-modal
+                  preview-teleported
+                />
+                <figcaption class="help-screenshot-caption">
+                  图 {{ index + 6 }}：{{ item.page }}页面
+                </figcaption>
+              </figure>
+            </div>
           </el-card>
 
           <el-card shadow="never" class="content-card">
@@ -556,29 +628,61 @@ html.dark .step-item {
   font-size: 13px;
 }
 
-.step-shot {
+.help-screenshot {
   display: block;
   width: 100%;
-  height: 120px;
-  margin-top: 10px;
-  border: 1px dashed var(--border-color);
+  max-width: 720px;
+  margin: 12px 0;
+  overflow: hidden;
+  border: 1px solid var(--app-card-border);
   border-radius: 6px;
-  background: var(--el-fill-color);
+  background: var(--el-fill-color-lighter);
 }
 
-.image-placeholder {
-  display: flex;
-  height: 120px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+.help-screenshot :deep(.el-image__inner) {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+html.dark .help-screenshot {
+  background: var(--el-fill-color-light);
+}
+
+.help-screenshot-caption {
+  margin: 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.6;
 }
 
-.image-placeholder .el-icon {
-  font-size: 20px;
+.page-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.page-gallery-item {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.page-gallery-image {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--app-card-border);
+  border-radius: 6px;
+  background: var(--el-fill-color-lighter);
+}
+
+.page-gallery-image :deep(.el-image__inner) {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .daily-list {

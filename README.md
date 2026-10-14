@@ -80,13 +80,35 @@ npm run start
 ## 界面预览
 
 
-| 页面 | 截图 |
-| --- | --- |
-| 仓库管理 | ![仓库管理](docs/screenshots/repo-manage.png) |
-| 文件与提交 | ![文件与提交](docs/screenshots/files-commit.png) |
-| 提交日志 | ![提交日志](docs/screenshots/commit-log.png) |
-| 推送中心 | ![推送中心](docs/screenshots/push-center.png) |
-| 设置 | ![设置](docs/screenshots/settings.png) |
+### 仓库管理
+
+![仓库管理](docs/screenshots/repo-manage.png)
+
+*图 1：仓库管理页面*
+
+### 文件与提交
+
+![文件与提交](docs/screenshots/files-commit.png)
+
+*图 2：文件与提交页面*
+
+### 提交日志
+
+![提交日志](docs/screenshots/commit-log.png)
+
+*图 3：提交日志页面*
+
+### 推送中心
+
+![推送中心](docs/screenshots/push-center.png)
+
+*图 4：推送中心页面*
+
+### 设置
+
+![设置](docs/screenshots/settings.png)
+
+*图 5：设置页面*
 
 ## 技术栈
 
@@ -159,7 +181,7 @@ src/
   renderer/    Vue 3 渲染进程，包含页面、组件、路由、Pinia store 与样式
   shared/      主进程与渲染进程共享的类型、IPC 通道和配置解析逻辑
 docs/
-  screenshots/ 界面截图目录（截图待补充）
+  screenshots/ 界面预览截图目录，由 npm run screenshots 自动生成
 ```
 
 ## 常用脚本
@@ -169,6 +191,7 @@ docs/
 | `npm run dev` | 以开发模式启动 Electron 应用。 |
 | `npm run build` | 先执行 TypeScript 类型检查，再通过 electron-vite 构建。 |
 | `npm run start` | 预览已经构建的应用。 |
+| `npm run screenshots` | 启动应用并自动生成界面预览截图，输出到 docs/screenshots/。 |
 | `npm run typecheck` | 同时执行主进程和渲染进程的类型检查。 |
 | `npm run typecheck:node` | 只检查主进程与 shared 类型。 |
 | `npm run typecheck:web` | 只检查渲染进程类型。 |

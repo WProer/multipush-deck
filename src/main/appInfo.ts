@@ -42,7 +42,7 @@ export async function getAppInfo(): Promise<AppInfo> {
       elementPlus
     },
     repositoryUrl: PROJECT_REPOSITORY_URL,
-    license: 'MIT'
+    license: 'PolyForm Noncommercial 1.0.0'
   }
 }
 
