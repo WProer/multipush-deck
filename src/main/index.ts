@@ -4,6 +4,9 @@ import { registerIpcHandlers } from './ipc'
 
 const APP_DISPLAY_NAME = 'MultiPush Deck'
 const APP_USER_DATA_DIR = 'MultiPushDeck'
+const APP_ICON_PATH = app.isPackaged
+  ? join(process.resourcesPath, 'icon.png')
+  : join(app.getAppPath(), 'build', 'icon.png')
 
 app.setName(APP_DISPLAY_NAME)
 app.setPath('userData', join(app.getPath('appData'), APP_USER_DATA_DIR))
@@ -17,6 +20,7 @@ function createWindow(): void {
     show: false,
     autoHideMenuBar: true,
     title: APP_DISPLAY_NAME,
+    icon: APP_ICON_PATH,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,

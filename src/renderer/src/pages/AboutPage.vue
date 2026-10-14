@@ -18,6 +18,7 @@ import {
 } from '@element-plus/icons-vue'
 import type { AppInfo, RuntimeInfo } from '../../../shared/types'
 import { useProjectStore } from '../stores/projectStore'
+import appLogo from '../assets/logo.png'
 
 const LICENSE_URL =
   'https://github.com/WProer/multipush-deck/blob/master/LICENSE'
@@ -224,7 +225,11 @@ onMounted(() => {
       <el-col :span="24">
         <el-card shadow="never" class="about-card banner-card">
           <div class="banner">
-            <div class="app-mark">MP</div>
+            <img
+              class="app-logo"
+              :src="appLogo"
+              alt="MultiPush Deck"
+            />
             <div class="app-copy">
               <h2>{{ appInfo?.name ?? 'MultiPush Deck' }}</h2>
               <p>版本 {{ appInfo?.version ?? '-' }}</p>
@@ -468,17 +473,13 @@ onMounted(() => {
   gap: 14px;
 }
 
-.app-mark {
-  display: grid;
-  width: 52px;
-  height: 52px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--el-color-primary);
-  color: var(--el-color-white);
-  font-size: 17px;
-  font-weight: 700;
+.app-logo {
+  display: block;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border-radius: 8px;
+  object-fit: contain;
 }
 
 .app-copy h2 {

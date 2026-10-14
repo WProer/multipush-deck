@@ -1,6 +1,6 @@
 {
   "name": "multipush-deck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "productName": "MultiPush Deck",
   "private": true,
   "description": "MultiPush Deck desktop application for synchronized multi-repository Git workflows",
@@ -14,6 +14,12 @@
       "output": "dist",
       "buildResources": "build"
     },
+    "extraResources": [
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ],
     "files": [
       "out/**/*",
       "package.json"
@@ -22,6 +28,7 @@
       "target": [
         "nsis"
       ],
+      "icon": "build/icon.ico",
       "artifactName": "${productName}-${version}-Setup.${ext}"
     },
     "nsis": {

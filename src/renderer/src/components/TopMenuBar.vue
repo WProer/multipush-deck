@@ -10,6 +10,7 @@ import {
   Warning
 } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
+import appLogo from '../assets/logo.png'
 import { useLogsStore } from '../stores/logsStore'
 import { useProjectStore } from '../stores/projectStore'
 
@@ -88,7 +89,10 @@ function handleToggleLog(): void {
 <template>
   <header class="top-menu-bar">
     <div class="menu-left">
-      <span class="app-name">MultiPush Deck</span>
+      <div class="app-brand">
+        <img class="app-logo" :src="appLogo" alt="" />
+        <span class="app-name">MultiPush Deck</span>
+      </div>
 
       <el-divider direction="vertical" class="menu-divider" />
 
@@ -215,6 +219,22 @@ function handleToggleLog(): void {
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.app-brand {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-logo {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
 }
 
 .menu-divider {
