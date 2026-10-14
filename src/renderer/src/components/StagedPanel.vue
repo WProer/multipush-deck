@@ -1,3 +1,7 @@
 <script setup lang="ts">
-<!-- 临时整理：第 1-1 项 -->
-<!-- 临时整理：第 1-2 项 -->
+import FileListPanel from './FileListPanel.vue'
+</script>
+
+<template>
+  <FileListPanel mode="staged" />
+</template>

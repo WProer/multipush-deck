@@ -69,5 +69,691 @@ const quickStartSteps: QuickStartStep[] = [
       '切换到“文件与提交”页查看未暂存文件，勾选、暂存、提交，完成后即可在“推送中心”一键推送到全部仓库。',
     icon: Upload
   }
-<!-- 临时整理：第 1-1 项 -->
-<!-- 临时整理：第 1-2 项 -->
+]
+
+const dailySteps: string[] = [
+  '在“文件与提交”页查看未暂存文件列表，确认本次需要提交的改动。',
+  '勾选文件后点击“暂存选中”，把文件放入已暂存区域。',
+  '在提交面板填写提交信息，点击“提交暂存区文件”。',
+  '点击“提交并推送”，或切换到“推送中心”点击“仅推送”。',
+  '在“提交日志”页查看历史提交以及每个远程的推送状态。'
+]
+
+const pageFunctions = [
+  { page: '仓库管理', description: '配置远程仓库、初始化、Setup、导入本地远程' },
+  { page: '文件与提交', description: '暂存、提交、查看 Diff' },
+  { page: '提交日志', description: '查看历史提交、推送状态' },
+  { page: '推送中心', description: '一键推送、查看同步状态、重新 Setup' },
+  { page: '设置', description: '默认目录、日志偏好、主题' }
+]
+
+const faqItems = [
+  {
+    name: 'network',
+    title: '推送失败提示“网络连接失败”怎么办？',
+    content:
+      '先确认本机网络可以访问目标 Git 服务，再检查远程地址与访问凭据是否有效。可以在全局日志面板展开失败命令，查看 stderr 与退出码定位具体原因。'
+  },
+  {
+    name: 'import',
+    title: '本地已有远程但配置文件为空怎么办？',
+    content:
+      '在“仓库管理”页点击“从本地远程导入”，应用会读取 git remote -v 并把本地远程合并进配置文件。若别名已存在但地址不同，默认跳过并由你决定是否覆盖。'
+  },
+  {
+    name: 'edit',
+    title: '如何修改某个仓库的地址？',
+    content:
+      '在“仓库管理”页选中该仓库，修改 URL 后保存，应用会写回 .git-remotes.txt。随后点击“Setup 远程”让本地 Git 远程与配置保持一致。'
+  },
+  {
+    name: 'single',
+    title: '如何只推送到其中一个仓库？',
+    content:
+      '当前“仅推送”面向全部已配置仓库。如需临时只推送单个仓库，可在系统终端对该仓库执行 git push，提交与暂存仍可在本应用中完成。'
+  },
+  {
+    name: 'message',
+    title: '提交信息填错了怎么改？',
+    content:
+      '如果尚未推送，可在系统终端执行 git commit --amend 修改最近一次提交信息；若已经推送，请谨慎使用 --amend 并确认远程分支允许强制更新。'
+  }
+]
+
+const capabilities: CapabilityItem[] = [
+  {
+    title: '多仓库管理',
+    description: '支持 Gitee、GitHub、GitLab 以及自建 Git 服务的地址配置。',
+    icon: Collection
+  },
+  {
+    title: '一键多推',
+    description: '单次操作推送到所有已配置仓库，失败自动跳过并汇总结果。',
+    icon: Promotion
+  },
+  {
+    title: '选择性提交',
+    description: '暂存与未暂存分区显示，支持逐文件勾选与批量操作。',
+    icon: Files
+  },
+  {
+    title: '提交日志',
+    description: '查看历史提交记录以及每个远程仓库的推送状态。',
+    icon: DataLine
+  },
+  {
+    title: '本地与配置对照',
+    description: '实时显示配置文件与本地 Git 远程之间的差异。',
+    icon: Connection
+  }
+]
+
+const techStack = [
+  { category: '界面框架', tech: 'Electron + Vue 3' },
+  { category: 'UI 组件库', tech: 'Element Plus' },
+  { category: '状态管理', tech: 'Pinia' },
+  { category: '构建工具', tech: 'electron-vite' },
+  { category: 'Git 调用', tech: '系统 Git（通过子进程）' }
+]
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    activeTab.value = tab === 'intro' ? 'intro' : 'guide'
+  }
+)
+
+function handleTabChange(name: string | number): void {
+  const tab = name === 'intro' ? 'intro' : 'guide'
+  void router.replace({
+    path: '/help',
+    query: tab === 'intro' ? { tab: 'intro' } : undefined
+  })
+}
+</script>
+
+<template>
+  <section class="help-page">
+    <header class="page-heading">
+      <div class="heading-icon">
+        <el-icon><Document /></el-icon>
+      </div>
+      <div>
+        <h1>帮助</h1>
+        <p>了解首次配置、日常使用流程以及应用的核心能力。</p>
+      </div>
+    </header>
+
+    <el-tabs v-model="activeTab" class="help-tabs" @tab-change="handleTabChange">
+      <el-tab-pane label="使用说明" name="guide">
+        <div class="tab-body">
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Guide /></el-icon>
+                <div>
+                  <h2>快速开始（首次使用）</h2>
+                  <p>五步完成从选择项目到开始日常提交的全部配置。</p>
+                </div>
+              </div>
+            </template>
+
+            <ol class="step-list">
+              <li
+                v-for="(step, index) in quickStartSteps"
+                :key="step.title"
+                class="step-item"
+              >
+                <div class="step-index">{{ index + 1 }}</div>
+                <div class="step-main">
+                  <div class="step-head">
+                    <el-icon><component :is="step.icon" /></el-icon>
+                    <h3>{{ step.title }}</h3>
+                  </div>
+                  <p>{{ step.description }}</p>
+                  <el-image class="step-shot" fit="cover">
+                    <template #error>
+                      <div class="image-placeholder">
+                        <el-icon><Picture /></el-icon>
+                        <span>界面截图占位</span>
+                      </div>
+                    </template>
+                  </el-image>
+                </div>
+              </li>
+            </ol>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Upload /></el-icon>
+                <div>
+                  <h2>日常使用流程</h2>
+                  <p>按照标准 Git 暂存区流程提交并同步代码。</p>
+                </div>
+              </div>
+            </template>
+
+            <ol class="daily-list">
+              <li v-for="(item, index) in dailySteps" :key="index">
+                <span class="daily-index">{{ index + 1 }}</span>
+                <span>{{ item }}</span>
+              </li>
+            </ol>
+
+            <div class="notice-row">
+              <el-icon><InfoFilled /></el-icon>
+              <span>提交按钮只提交已暂存文件，未暂存内容不会进入本次提交。</span>
+            </div>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Monitor /></el-icon>
+                <div>
+                  <h2>各页面功能说明</h2>
+                  <p>了解每个页面负责的工作内容。</p>
+                </div>
+              </div>
+            </template>
+
+            <el-table :data="pageFunctions" border class="function-table">
+              <el-table-column prop="page" label="页面" width="160" />
+              <el-table-column prop="description" label="主要功能" />
+            </el-table>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><InfoFilled /></el-icon>
+                <div>
+                  <h2>常见问题</h2>
+                  <p>遇到问题时可先查阅以下内容。</p>
+                </div>
+              </div>
+            </template>
+
+            <el-collapse class="faq-collapse">
+              <el-collapse-item
+                v-for="item in faqItems"
+                :key="item.name"
+                :title="item.title"
+                :name="item.name"
+              >
+                <p>{{ item.content }}</p>
+              </el-collapse-item>
+            </el-collapse>
+          </el-card>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="工具介绍" name="intro">
+        <div class="tab-body">
+          <el-card shadow="never" class="content-card intro-hero">
+            <div class="intro-heading">
+              <el-icon><Box /></el-icon>
+              <h2>MultiPush Deck 是什么</h2>
+            </div>
+            <p class="intro-summary">
+              一款支持将同一份代码推送到多个远程仓库的桌面客户端，基于 Electron + Vue 3 +
+              Element Plus 构建。
+            </p>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Collection /></el-icon>
+                <div>
+                  <h2>核心能力</h2>
+                  <p>围绕多远程同步提供的核心功能。</p>
+                </div>
+              </div>
+            </template>
+
+            <div class="capability-grid">
+              <article
+                v-for="item in capabilities"
+                :key="item.title"
+                class="capability-card"
+              >
+                <el-icon><component :is="item.icon" /></el-icon>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.description }}</p>
+              </article>
+            </div>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Connection /></el-icon>
+                <div>
+                  <h2>工作原理</h2>
+                  <p>从配置文件到多仓库推送的完整链路。</p>
+                </div>
+              </div>
+            </template>
+
+            <div class="principle-flow">
+              <article class="principle-node">
+                <el-icon><Document /></el-icon>
+                <h3>配置文件</h3>
+                <p>.git-remotes.txt 保存你期望同步的仓库列表。</p>
+              </article>
+              <span class="principle-arrow">
+                <el-icon><Refresh /></el-icon>
+                <span>Setup</span>
+              </span>
+              <article class="principle-node">
+                <el-icon><Setting /></el-icon>
+                <h3>本地远程</h3>
+                <p>Setup 会把配置写入本地 Git 的 remote 列表。</p>
+              </article>
+              <span class="principle-arrow">
+                <el-icon><Refresh /></el-icon>
+                <span>Push</span>
+              </span>
+              <article class="principle-node">
+                <el-icon><Promotion /></el-icon>
+                <h3>多个远程</h3>
+                <p>推送时对每个 remote 依次执行 git push 并汇总结果。</p>
+              </article>
+            </div>
+
+            <div class="notice-row">
+              <el-icon><Check /></el-icon>
+              <span>所有操作都基于系统 Git，不引入额外运行时。</span>
+            </div>
+          </el-card>
+
+          <el-card shadow="never" class="content-card">
+            <template #header>
+              <div class="card-title">
+                <el-icon><Box /></el-icon>
+                <div>
+                  <h2>技术栈</h2>
+                  <p>构成应用的框架与依赖。</p>
+                </div>
+              </div>
+            </template>
+
+            <el-table :data="techStack" border class="function-table">
+              <el-table-column prop="category" label="类别" width="160" />
+              <el-table-column prop="tech" label="技术" />
+            </el-table>
+          </el-card>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </section>
+</template>
+
+<style scoped>
+.help-page {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: var(--app-bg);
+}
+
+.page-heading {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--panel-bg);
+}
+
+.heading-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-size: 19px;
+}
+
+.page-heading h1,
+.card-title h2,
+.intro-heading h2,
+.step-head h3,
+.capability-card h3,
+.principle-node h3 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.page-heading h1 {
+  font-size: 18px;
+}
+
+.page-heading p,
+.card-title p,
+.step-main p,
+.capability-card p,
+.principle-node p,
+.intro-summary {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.help-tabs {
+  min-width: 0;
+}
+
+.help-tabs :deep(.el-tabs__header) {
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px 8px 0 0;
+  background: var(--panel-bg);
+}
+
+.help-tabs :deep(.el-tabs__content) {
+  padding-top: 14px;
+}
+
+.tab-body {
+  display: grid;
+  gap: 14px;
+}
+
+.content-card {
+  border-radius: 8px;
+  border-color: var(--border-color);
+}
+
+.content-card :deep(.el-card__header) {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.content-card :deep(.el-card__body) {
+  padding: 16px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title > .el-icon {
+  flex: 0 0 auto;
+  color: var(--el-color-primary);
+  font-size: 18px;
+}
+
+.card-title h2 {
+  font-size: 14px;
+}
+
+.step-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  background: var(--el-fill-color-lighter);
+}
+
+html.dark .step-item {
+  background: var(--el-fill-color-light);
+}
+
+.step-index {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--el-color-primary);
+  color: var(--el-color-white);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.step-head > .el-icon {
+  color: var(--el-color-primary);
+  font-size: 17px;
+}
+
+.step-head h3 {
+  font-size: 13px;
+}
+
+.step-shot {
+  display: block;
+  width: 100%;
+  height: 120px;
+  margin-top: 10px;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  background: var(--el-fill-color);
+}
+
+.image-placeholder {
+  display: flex;
+  height: 120px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.image-placeholder .el-icon {
+  font-size: 20px;
+}
+
+.daily-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.daily-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.daily-index {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.notice-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 9px 11px;
+  border-radius: 6px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-size: 12px;
+}
+
+html.dark .notice-row {
+  background: var(--app-active-bg);
+  color: var(--el-color-primary-light-3);
+}
+
+.function-table {
+  width: 100%;
+}
+
+.function-table :deep(.el-table__cell) {
+  padding: 7px 0;
+  font-size: 12px;
+}
+
+.faq-collapse {
+  border-top: 0;
+}
+
+.faq-collapse :deep(.el-collapse-item__header) {
+  font-size: 13px;
+}
+
+.faq-collapse :deep(.el-collapse-item__content) p {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.intro-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--el-color-primary);
+}
+
+.intro-heading .el-icon {
+  font-size: 20px;
+}
+
+.intro-heading h2 {
+  font-size: 16px;
+  color: var(--text-strong);
+}
+
+.intro-summary {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.capability-card {
+  min-height: 118px;
+  padding: 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  background: var(--el-fill-color-lighter);
+}
+
+html.dark .capability-card {
+  background: var(--el-fill-color-light);
+}
+
+.capability-card > .el-icon {
+  color: var(--el-color-primary);
+  font-size: 20px;
+}
+
+.capability-card h3 {
+  margin-top: 9px;
+  font-size: 13px;
+}
+
+.principle-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.principle-node {
+  min-height: 128px;
+  padding: 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 7px;
+  background: var(--el-fill-color-lighter);
+}
+
+html.dark .principle-node {
+  background: var(--el-fill-color-light);
+}
+
+.principle-node > .el-icon {
+  color: var(--el-color-primary);
+  font-size: 20px;
+}
+
+.principle-node h3 {
+  margin-top: 9px;
+  font-size: 13px;
+}
+
+.principle-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.principle-arrow .el-icon {
+  color: var(--el-color-primary);
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .principle-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .principle-arrow {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+</style>

@@ -68,5 +68,40 @@ export const useProjectStore = defineStore('project', () => {
   function setRepositoryCount(value: number): void {
     repositoryCount.value = value
   }
-// 临时整理：第 2-1 项
-const __draft1_1 = 1
+
+  function setConfigState(options: {
+    hasValidConfig: boolean
+    hasLocalRemotes: boolean
+    isSetupDone: boolean
+  }): void {
+    hasValidConfig.value = options.hasValidConfig
+    hasLocalRemotes.value = options.hasLocalRemotes
+    isSetupDone.value = options.isSetupDone
+  }
+
+  function clear(): void {
+    cwd.value = ''
+    persistDirectory('')
+    branch.value = ''
+    isGitRepo.value = null
+    repositoryCount.value = null
+    resetConfigState()
+  }
+
+  return {
+    cwd,
+    branch,
+    isGitRepo,
+    repositoryCount,
+    hasValidConfig,
+    hasLocalRemotes,
+    isSetupDone,
+    setDirectory,
+    selectDirectory,
+    setBranch,
+    setGitRepo,
+    setRepositoryCount,
+    setConfigState,
+    clear
+  }
+})
